@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { initGoogleAds, trackPageView, trackScroll, trackPageLoad } from './utils/analytics';
+import useLeadScoring from './hooks/useLeadScoring';
+import useSmartPopups from './hooks/useSmartPopups';
+import LeadScoreWidget from './components/LeadScoreWidget';
+import SmartPopup from './components/SmartPopup';
 import Header from './components/Header';
 import Services from './components/Services';
 import AboutMe from './components/AboutMe';
@@ -15,7 +19,10 @@ import ThankYouPage from './components/ThankYouPage';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
-  const [showExitPopup, setShowExitPopup] = useState(false);
+  
+  // Lead scoring and smart popups
+  const { leadScore, trackFormInteraction, trackCardDraw, trackServiceView } = useLeadScoring();
+  const { popupState, closePopup, handlePopupSubmit } = useSmartPopups(leadScore);
 
   // Ініціалізація Google Ads
   React.useEffect(() => {
@@ -49,22 +56,6 @@ function App() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
-    };
-  }, []);
-
-  // Handle exit intent
-  React.useEffect(() => {
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !localStorage.getItem('exitPopupShown')) {
-        setShowExitPopup(true);
-        localStorage.setItem('exitPopupShown', 'true');
-      }
-    };
-
-    document.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
 
@@ -104,7 +95,10 @@ function App() {
       </section>
       
       <main>
-        <CardOfDay onFullReadingClick={() => setShowModal(true)} />
+        <CardOfDay 
+          onFullReadingClick={() => setShowModal(true)} 
+          onCardDraw={trackCardDraw}
+        />
         <Services />
         <AboutMe />
         <Testimonials />
@@ -114,8 +108,23 @@ function App() {
       
       <Footer />
       
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} />
-      <ExitPopup isOpen={showExitPopup} onClose={() => setShowExitPopup(false)} />
+      <Modal 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)}
+        onFormStart={trackFormInteraction}
+      />
+      
+      {/* Smart Popup System */}
+      <SmartPopup
+        isOpen={popupState.isOpen}
+        onClose={closePopup}
+        type={popupState.type!}
+        leadScore={leadScore}
+        onSubmit={handlePopupSubmit}
+      />
+      
+      {/* Lead Score Widget */}
+      <LeadScoreWidget leadScore={leadScore} />
     </>
   );
 

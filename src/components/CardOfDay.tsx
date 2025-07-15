@@ -5,9 +5,10 @@ import AdvancedTarotCard from './AdvancedTarotCard';
 
 interface CardOfDayProps {
   onFullReadingClick: () => void;
+  onCardDraw?: () => void;
 }
 
-const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick }) => {
+const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw }) => {
   const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [multipleCards, setMultipleCards] = useState<TarotCard[]>([]);
@@ -16,6 +17,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick }) => {
 
   const handleDrawSingle = () => {
     trackCardDraw();
+    onCardDraw?.();
     
     // Reset if already drawn
     if (isFlipped) {
@@ -39,6 +41,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick }) => {
 
   const handleDrawMultiple = (count: number) => {
     trackButtonClick(`draw_${count}_cards`, 'card_of_day');
+    onCardDraw?.();
     
     // Reset state
     setIsFlipped(false);
