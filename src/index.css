@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-darkblue text-gray-100 font-body;
+    background-image: url('https://images.pexels.com/photos/998641/pexels-photo-998641.jpeg?auto=compress&cs=tinysrgb&w=1600');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .gold-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #d4af37, #f5e0a2, #d4af37);
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-gold text-darkblue rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)] transform hover:-translate-y-1;
+  }
+  
+  .card {
+    @apply bg-darkblue/80 backdrop-blur-sm border border-purple/30 rounded-lg p-6 shadow-lg transition-all duration-300;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-6 gold-gradient;
+  }
+  
+  .nav-link {
+    @apply relative text-gray-200 hover:text-gold transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gold after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .icon-container {
+    @apply text-gold bg-darkblue/70 p-4 rounded-full border border-gold/30 shadow-[0_0_10px_rgba(212,175,55,0.3)];
+  }
+
+  .card-flip-container {
+    @apply relative h-[350px] w-[220px] mx-auto cursor-pointer;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
+  .card-flip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+  }
+
+  .card-flip.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .card-front,
+  .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .card-front {
+    transform: rotateY(180deg);
+  }
+}
