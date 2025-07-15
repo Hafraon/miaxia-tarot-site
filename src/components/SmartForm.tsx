@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, Phone, Mail, Instagram, Calendar, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
+import useLeadTracker from '../hooks/useLeadTracker';
 
 interface FormField {
   name: string;
@@ -23,6 +24,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [progress, setProgress] = useState(0);
+  const leadTracker = useLeadTracker();
+  const [formStartTime] = useState(Date.now());
   const [analytics, setAnalytics] = useState({
     startTime: Date.now(),
     fieldInteractions: {} as Record<string, number>,
@@ -134,6 +137,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
 
   // Load saved data from localStorage
   useEffect(() => {
+    // Track form open
+    leadTracker.trackFormOpen(formType);
+    
     const savedData = localStorage.getItem(`miaxialip_form_${formType}`);
     if (savedData) {
       try {
@@ -172,6 +178,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
 
   const handleChange = (fieldName: string, value: string) => {
     setFormData(prev => ({ ...prev, [fieldName]: value }));
+    
+    // Track field interaction in lead tracker
+    leadTracker.trackFormFill(fieldName);
     
     // Track field interactions
     setAnalytics(prev => ({

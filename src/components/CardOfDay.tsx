@@ -102,7 +102,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
   };
 
   return (
-    <section className="py-16 md:py-24 bg-purple/10">
+    <section className="py-12 md:py-20 bg-purple/10">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="section-title">Карти Таро</h2>

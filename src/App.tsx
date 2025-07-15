@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { initGoogleAds, trackPageView, trackScroll, trackPageLoad } from './utils/analytics';
-import useLeadScoring from './hooks/useLeadScoring';
+import useLeadTracker from './hooks/useLeadTracker';
 import useSmartPopups from './hooks/useSmartPopups';
-import LeadScoreWidget from './components/LeadScoreWidget';
+import LeadAnalyticsBadge from './components/LeadAnalyticsBadge';
+import './utils/leadReporting'; // Ініціалізація системи звітності
 import SmartPopup from './components/SmartPopup';
 import Header from './components/Header';
 import Services from './components/Services';
@@ -20,9 +21,17 @@ import ThankYouPage from './components/ThankYouPage';
 function App() {
   const [showModal, setShowModal] = useState(false);
   
-  // Lead scoring and smart popups
-  const { leadScore, trackFormInteraction, trackCardDraw, trackServiceView } = useLeadScoring();
-  const { popupState, closePopup, handlePopupSubmit } = useSmartPopups(leadScore);
+  // Lead tracking and smart popups
+  const leadTracker = useLeadTracker();
+  const { popupState, showExitPopup, setShowExitPopup, closePopup, handlePopupSubmit } = useSmartPopups({
+    totalScore: leadTracker.getCurrentScore(),
+    timeOnSite: leadTracker.getCurrentDuration(),
+    scrollDepth: leadTracker.getCurrentScrollPercent(),
+    interactions: leadTracker.getCurrentInteractions(),
+    level: leadTracker.getCurrentScore() >= 80 ? 'vip' : 
+           leadTracker.getCurrentScore() >= 60 ? 'hot' :
+           leadTracker.getCurrentScore() >= 40 ? 'warm' : 'cold'
+  });
 
   // Ініціалізація Google Ads
   React.useEffect(() => {
@@ -68,7 +77,7 @@ function App() {
       <Header onOrderClick={() => setShowModal(true)} />
       
       {/* Hero Section */}
-      <section className="pt-28 pb-16 md:pt-36 md:pb-24">
+      <section className="pt-32 pb-16 md:pt-40 md:pb-24">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-block mb-6">
@@ -94,10 +103,10 @@ function App() {
         </div>
       </section>
       
-      <main>
+      <main className="pt-4">
         <CardOfDay 
           onFullReadingClick={() => setShowModal(true)} 
-          onCardDraw={trackCardDraw}
+          onCardDraw={() => leadTracker.trackCardDraw('daily_card')}
         />
         <Services />
         <AboutMe />
@@ -111,7 +120,13 @@ function App() {
       <Modal 
         isOpen={showModal} 
         onClose={() => setShowModal(false)}
-        onFormStart={trackFormInteraction}
+        onFormStart={() => leadTracker.trackFormOpen('modal')}
+      />
+      
+      {/* Exit Intent Popup */}
+      <ExitPopup
+        isOpen={showExitPopup}
+        onClose={() => setShowExitPopup(false)}
       />
       
       {/* Smart Popup System */}
@@ -119,12 +134,20 @@ function App() {
         isOpen={popupState.isOpen}
         onClose={closePopup}
         type={popupState.type!}
-        leadScore={leadScore}
+        leadScore={{
+          totalScore: leadTracker.getCurrentScore(),
+          timeOnSite: leadTracker.getCurrentDuration(),
+          scrollDepth: leadTracker.getCurrentScrollPercent(),
+          interactions: leadTracker.getCurrentInteractions(),
+          level: leadTracker.getCurrentScore() >= 80 ? 'vip' : 
+                 leadTracker.getCurrentScore() >= 60 ? 'hot' :
+                 leadTracker.getCurrentScore() >= 40 ? 'warm' : 'cold'
+        }}
         onSubmit={handlePopupSubmit}
       />
       
-      {/* Lead Score Widget */}
-      <LeadScoreWidget leadScore={leadScore} />
+      {/* Lead Analytics Badge */}
+      <LeadAnalyticsBadge />
     </>
   );
 

@@ -3,7 +3,7 @@ import FormManager from './FormManager';
 
 const OrderForm: React.FC = () => {
   return (
-    <section id="contact" className="py-16 md:py-24 bg-purple/10">
+    <section id="contact" className="py-12 md:py-20 bg-purple/10">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="section-title">Замовити розклад</h2>

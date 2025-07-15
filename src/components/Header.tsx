@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
   return (
     <header 
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-darkblue/90 backdrop-blur-md py-3 shadow-lg' : 'bg-transparent py-5'
+        isScrolled ? 'bg-darkblue/95 backdrop-blur-md py-3 shadow-lg border-b border-gold/20' : 'bg-darkblue/80 backdrop-blur-sm py-5'
       }`}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">

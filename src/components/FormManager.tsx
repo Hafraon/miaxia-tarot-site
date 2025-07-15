@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SmartForm from './SmartForm';
 import { TelegramService, TelegramMessage } from '../utils/telegramService';
 import { trackFormStart, trackFormSubmit, trackOrderFormConversion, trackQuickOrderConversion } from '../utils/analytics';
+import useLeadTracker from '../hooks/useLeadTracker';
 
 interface FormManagerProps {
   defaultType?: 'quick' | 'detailed' | 'newsletter';
@@ -16,6 +17,7 @@ const FormManager: React.FC<FormManagerProps> = ({
   className = '' 
 }) => {
   const navigate = useNavigate();
+  const leadTracker = useLeadTracker();
   const [activeFormType, setActiveFormType] = useState<'quick' | 'detailed' | 'newsletter'>(defaultType);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
@@ -26,6 +28,9 @@ const FormManager: React.FC<FormManagerProps> = ({
       setIsSubmitting(true);
       setSubmitStatus('idle');
       setSubmitMessage('');
+
+      // Track form submission in lead tracker
+      leadTracker.trackFormSubmit(data.formType);
 
       // Track form submission
       trackFormSubmit(`${data.formType}_form`, data.service || 'consultation');

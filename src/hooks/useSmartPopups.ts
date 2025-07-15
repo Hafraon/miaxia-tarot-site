@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TelegramService, TelegramMessage } from '../utils/telegramService';
 import { LeadScore } from './useLeadScoring';
+import ExitPopup from '../components/ExitPopup';
 
 export type PopupType = 'exit-intent' | 'time-based' | 'behavior-based' | 'high-engagement';
 
@@ -26,23 +27,56 @@ const useSmartPopups = (leadScore: LeadScore) => {
       'high-engagement': false
     }
   });
+  const [showExitPopup, setShowExitPopup] = useState(false);
+  const [exitIntentShown, setExitIntentShown] = useState(false);
 
-  // Exit intent detection
+  // Покращений Exit intent detection
   useEffect(() => {
+    let isExiting = false;
+    
     const handleMouseLeave = (e: MouseEvent) => {
-      if (
-        e.clientY <= 0 && 
-        !popupState.hasShown['exit-intent'] && 
-        !popupState.isOpen &&
-        leadScore.timeOnSite > 30 // At least 30 seconds on site
-      ) {
-        showPopup('exit-intent');
+      // Спрацьовує тільки якщо миша йде до верху екрану (закриття браузера)
+      if (e.clientY <= 5 && !exitIntentShown && !isExiting && leadScore.timeOnSite > 30) {
+        isExiting = true;
+        setShowExitPopup(true);
+        setExitIntentShown(true);
       }
     };
 
+    // Додатковий тригер - неактивність 45 секунд
+    const inactivityTimer = setTimeout(() => {
+      if (!exitIntentShown && !isExiting && leadScore.timeOnSite > 45) {
+        isExiting = true;
+        setShowExitPopup(true);
+        setExitIntentShown(true);
+      }
+    }, 45000); // 45 секунд неактивності
+
     document.addEventListener('mouseleave', handleMouseLeave);
-    return () => document.removeEventListener('mouseleave', handleMouseLeave);
-  }, [popupState.hasShown, popupState.isOpen, leadScore.timeOnSite]);
+    
+    return () => {
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      clearTimeout(inactivityTimer);
+    };
+  }, [exitIntentShown, leadScore.timeOnSite]);
+
+  // Скидання при активності користувача
+  useEffect(() => {
+    const resetInactivity = () => {
+      // Логіка скидання таймерів при активності
+    };
+
+    const events = ['mousemove', 'scroll', 'click', 'keydown'];
+    events.forEach(event => {
+      document.addEventListener(event, resetInactivity);
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, resetInactivity);
+      });
+    };
+  }, []);
 
   // Time-based popup (3 minutes)
   useEffect(() => {
@@ -151,6 +185,8 @@ const useSmartPopups = (leadScore: LeadScore) => {
 
   return {
     popupState,
+    showExitPopup,
+    setShowExitPopup,
     closePopup,
     handlePopupSubmit,
     showPopup // For manual triggering
