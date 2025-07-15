@@ -6,14 +6,16 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-darkblue/90 text-gray-300 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12" itemScope itemType="https://schema.org/Organization">
+          <meta itemProp="name" content="MiaxiaLip Tarot" />
+          <meta itemProp="url" content="https://miaxialip.com" />
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="h-6 w-6 text-gold" />
-              <h3 className="text-xl font-bold gold-gradient">MiaxiaLip</h3>
+              <h3 className="text-xl font-bold gold-gradient" itemProp="name">MiaxiaLip</h3>
             </div>
             
-            <p className="mb-6">
+            <p className="mb-6" itemProp="description">
               Відкрийте таємниці майбутнього та знайдіть відповіді на найважливіші питання життя з допомогою професійних розкладів таро.
             </p>
             
@@ -33,14 +35,14 @@ const Footer: React.FC = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-gold" />
-                <a href="mailto:info@miaxialip.com" className="hover:text-gold transition-colors duration-300">
+                <a href="mailto:info@miaxialip.com" className="hover:text-gold transition-colors duration-300" itemProp="email">
                   info@miaxialip.com
                 </a>
               </li>
             </ul>
             
             <h4 className="text-lg font-semibold mt-6 mb-4 gold-gradient">Години роботи</h4>
-            <p>Щодня: 11:00 - 02:00</p>
+            <p itemProp="openingHours" content="Mo-Su 11:00-02:00">Щодня: 11:00 - 02:00</p>
           </div>
           
           <div>

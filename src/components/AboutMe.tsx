@@ -4,10 +4,10 @@ const AboutMe: React.FC = () => {
   return (
     <section id="about" className="py-16 md:py-24">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center" itemScope itemType="https://schema.org/Person">
           <h2 className="section-title">Майстер таро з 5-річним досвідом</h2>
           
-          <p className="text-gray-300 mb-6 text-lg">
+          <p className="text-gray-300 mb-6 text-lg" itemProp="description">
             Мій шлях у світі Таро почався 5 років тому. За цей час я навчилася чути голос карт, розуміти їхні послання та передавати їх людям, які шукають відповіді на свої запитання.
           </p>
           
@@ -27,8 +27,9 @@ const AboutMe: React.FC = () => {
               </div>
             </div>
             <div>
-              <p className="font-heading text-lg gold-gradient italic">Mia</p>
-              <p className="text-sm text-gray-400">Ваш особистий провідник у світі Таро</p>
+              <p className="font-heading text-lg gold-gradient italic" itemProp="name">Mia</p>
+              <p className="text-sm text-gray-400" itemProp="jobTitle">Ваш особистий провідник у світі Таро</p>
+              <meta itemProp="worksFor" content="MiaxiaLip Tarot" />
             </div>
           </div>
         </div>

@@ -22,7 +22,7 @@ const Testimonials: React.FC = () => {
           </p>
         </div>
         
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-4xl mx-auto" itemScope itemType="https://schema.org/ItemList">
           {/* Slider controls */}
           <button 
             onClick={goToPrev}
@@ -51,19 +51,24 @@ const Testimonials: React.FC = () => {
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
               {testimonials.map((testimonial) => (
-                <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
+                <div key={testimonial.id} className="w-full flex-shrink-0 px-4" itemScope itemType="https://schema.org/Review">
                   <div className="card text-center">
+                    <meta itemProp="itemReviewed" content="MiaxiaLip Tarot Services" />
+                    <div itemProp="reviewRating" itemScope itemType="https://schema.org/Rating">
+                      <meta itemProp="ratingValue" content="5" />
+                      <meta itemProp="bestRating" content="5" />
+                    </div>
                     <div className="mb-6">
                       {[...Array(5)].map((_, i) => (
                         <span key={i} className="text-gold text-xl mx-0.5">★</span>
                       ))}
                     </div>
                     
-                    <blockquote className="text-gray-200 text-lg italic mb-8">
+                    <blockquote className="text-gray-200 text-lg italic mb-8" itemProp="reviewBody">
                       "{testimonial.text}"
                     </blockquote>
                     
-                    <div className="flex items-center justify-center">
+                    <div className="flex items-center justify-center" itemProp="author" itemScope itemType="https://schema.org/Person">
                       <div className="w-12 h-12 rounded-full overflow-hidden mr-4 bg-purple/30 flex items-center justify-center">
                         {testimonial.image ? (
                           <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
@@ -72,9 +77,10 @@ const Testimonials: React.FC = () => {
                         )}
                       </div>
                       <div className="text-left">
-                        <h4 className="font-semibold gold-gradient">{testimonial.name}</h4>
+                        <h4 className="font-semibold gold-gradient" itemProp="name">{testimonial.name}</h4>
                         <p className="text-sm text-gray-400">{testimonial.location}</p>
                       </div>
+                      <meta itemProp="datePublished" content="2024-01-01" />
                     </div>
                   </div>
                 </div>
