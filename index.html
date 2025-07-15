@@ -191,51 +191,26 @@
     
     <!-- Telegram Integration Script -->
     <script>
-      // Telegram Configuration
+      // Telegram Configuration (НОВИЙ БОТ @miaxialip_tarot_bot)
       window.TELEGRAM_CONFIG = {
         chatId: '7853031712',
         botToken: '7853031712:AAHS29d-x7_mWZ1zoNzP8kCbTOxW0vtI18w',
+        recipientEmail: 'miaxialip@gmail.com',
         botUsername: '@miaxialip_tarot_bot',
         botUrl: 'https://t.me/miaxialip_tarot_bot'
       };
 
-      // Website Services with Bot Discounts
+      // Updated service prices for website (without bot discount)
       window.WEBSITE_SERVICES = {
-        individual: { 
-          name: '1 питання', 
-          price: 100, 
-          botPrice: 70, 
-          discount: 30,
-          description: 'Отримайте відповідь на одне конкретне питання'
-        },
-        love: { 
-          name: 'Любовний прогноз', 
-          price: 350, 
-          botPrice: 280, 
-          discount: 20,
-          description: 'Розклади на сумісність, перспективи стосунків'
-        },
-        career: { 
-          name: 'Кар\'єра і фінанси', 
-          price: 400, 
-          botPrice: 350, 
-          discount: 12,
-          description: 'Аналіз фінансових можливостей та кар\'єрного розвитку'
-        },
-        full: { 
-          name: '"Про себе" (6 питань)', 
-          price: 500, 
-          botPrice: 450, 
-          discount: 10,
-          description: 'Комплексний розклад про вашу особистість'
-        },
-        matrix: { 
-          name: 'Персональна матриця', 
-          price: 650, 
-          botPrice: 570, 
-          discount: 12,
-          description: 'Глибинний аналіз особистості через таро та нумерологію'
-        }
+        'individual': { name: '1 питання', price: 100, botPrice: 70, discount: 30, description: 'Отримайте відповідь на одне конкретне питання' },
+        'love': { name: 'Любовний прогноз', price: 350, botPrice: 280, discount: 20, description: 'Розклади на сумісність, перспективи стосунків' },
+        'career': { name: 'Кар\'єра і фінанси', price: 400, botPrice: 350, discount: 12, description: 'Аналіз фінансових можливостей та кар\'єрного розвитку' },
+        'full': { name: '"Про себе" (6 питань)', price: 500, botPrice: 450, discount: 10, description: 'Комплексний розклад про вашу особистість' },
+        'relationship': { name: '"Стосунки" (6 питань)', price: 450, botPrice: 390, discount: 13, description: 'Детальний аналіз ваших стосунків' },
+        'business': { name: '"Бізнес" (6 питань)', price: 450, botPrice: 400, discount: 11, description: 'Розклад для підприємців' },
+        'matrix': { name: 'Персональна матриця', price: 650, botPrice: 570, discount: 12, description: 'Глибинний аналіз особистості через таро та нумерологію' },
+        'compatibility': { name: 'Матриця сумісності', price: 600, botPrice: 550, discount: 8, description: 'Аналіз сумісності з партнером' },
+        'year': { name: 'Аркан на рік', price: 600, botPrice: 560, discount: 7, description: 'Прогноз на цілий рік' }
       };
 
       // Send message to Telegram function
@@ -388,7 +363,7 @@
         promo.className = 'telegram-bot-promo';
         promo.innerHTML = `
           <div class="telegram-bot-promo-content">
-            <button class="telegram-bot-promo-close" onclick="this.parentElement.parentElement.remove()">×</button>
+            <button class="telegram-bot-promo-close" onclick="this.parentElement.parentElement.remove(); sessionStorage.setItem('botPromoShown', 'true');">×</button>
             
             <div class="telegram-bot-promo-header">
               <div class="telegram-bot-promo-icon">🤖</div>
@@ -613,6 +588,7 @@
         backdrop.onclick = () => {
           backdrop.remove();
           promo.remove();
+          sessionStorage.setItem('botPromoShown', 'true');
         };
 
         document.body.appendChild(backdrop);
