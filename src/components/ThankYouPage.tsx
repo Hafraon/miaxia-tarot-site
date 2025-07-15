@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import { CheckCircle, Clock, Instagram, Send } from 'lucide-react';
+import { trackPageView, trackSocialClick, trackConsultationConversion } from '../utils/analytics';
 
 const ThankYouPage: React.FC = () => {
   useEffect(() => {
-    // Google Ads conversion tracking
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'conversion', {
-        'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL', // Замініть на ваш ID
-        'value': 1.0,
-        'currency': 'UAH'
-      });
-    }
+    // Відстеження перегляду сторінки подяки
+    trackPageView('Thank You Page', window.location.href);
+    
+    // Додаткова конверсія консультації (якщо потрібно)
+    trackConsultationConversion('Consultation Completed', 400);
 
     // Facebook Pixel conversion tracking
     if (typeof window !== 'undefined' && (window as any).fbq) {
@@ -19,9 +17,9 @@ const ThankYouPage: React.FC = () => {
 
     // Custom event for analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'form_submit', {
+      (window as any).gtag('event', 'consultation_completed', {
         'event_category': 'engagement',
-        'event_label': 'tarot_consultation_request'
+        'event_label': 'thank_you_page_reached'
       });
     }
   }, []);
@@ -75,6 +73,7 @@ const ThankYouPage: React.FC = () => {
                 href="https://www.instagram.com/miaxialip?igsh=bzF5bGZ6N3N3ODRt&utm_source=qr" 
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackSocialClick('instagram', 'thank_you_page')}
                 className="flex items-center justify-center gap-3 bg-darkblue/70 p-4 rounded-lg border border-gold/30 hover:border-gold/60 hover:bg-darkblue/90 transition-all duration-300 group"
               >
                 <Instagram className="h-6 w-6 text-gold group-hover:scale-110 transition-transform duration-300" />
@@ -88,6 +87,7 @@ const ThankYouPage: React.FC = () => {
                 href="https://t.me/miaxiataro" 
                 target="_blank"
                 rel="noopener noreferrer"
+               onClick={() => trackSocialClick('telegram', 'thank_you_page')}
                 className="flex items-center justify-center gap-3 bg-darkblue/70 p-4 rounded-lg border border-gold/30 hover:border-gold/60 hover:bg-darkblue/90 transition-all duration-300 group"
               >
                 <Send className="h-6 w-6 text-gold group-hover:scale-110 transition-transform duration-300" />

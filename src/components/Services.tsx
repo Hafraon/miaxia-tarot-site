@@ -1,12 +1,20 @@
 import React from 'react';
-import { Heart, TrendingUp, Users } from 'lucide-react';
-import { services } from '../data/services';
+import { Heart, TrendingUp, Users, Star, Building, Calculator, Calendar, UserCheck } from 'lucide-react';
+import { getServicesList } from '../data/services';
 
 const Services: React.FC = () => {
-  const icons = {
+  const services = getServicesList();
+  
+  const icons: Record<string, React.ReactNode> = {
     individual: <Users className="h-8 w-8" />,
     love: <Heart className="h-8 w-8" />,
-    career: <TrendingUp className="h-8 w-8" />
+    career: <TrendingUp className="h-8 w-8" />,
+    full: <Star className="h-8 w-8" />,
+    relationship: <UserCheck className="h-8 w-8" />,
+    business: <Building className="h-8 w-8" />,
+    matrix: <Calculator className="h-8 w-8" />,
+    compatibility: <Heart className="h-8 w-8" />,
+    year: <Calendar className="h-8 w-8" />
   };
 
   return (
@@ -19,29 +27,45 @@ const Services: React.FC = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service) => (
             <div 
               key={service.id}
-              className="card group hover:border-gold/50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]"
+              className="card group hover:border-gold/50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] relative"
             >
+              {service.discount > 0 && (
+                <div className="absolute -top-3 -right-3 bg-accent text-white px-3 py-1 rounded-full text-sm font-bold">
+                  -{service.discount}%
+                </div>
+              )}
+              
               <div className="icon-container mb-6 inline-block group-hover:scale-110 transition-transform duration-300">
-                {icons[service.icon as keyof typeof icons]}
+                {icons[service.id]}
               </div>
               
               <h3 className="text-xl font-semibold mb-3 gold-gradient">
                 {service.title}
               </h3>
               
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-300 mb-6 text-sm">
                 {service.description}
               </p>
               
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl font-bold text-gold">{service.price} грн</span>
+                  {service.originalPrice > service.price && (
+                    <span className="text-gray-400 line-through text-lg">{service.originalPrice} грн</span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-400">Спеціальна ціна</p>
+              </div>
+              
               <a 
-                href="#"
+                href="#contact"
                 className="inline-flex items-center text-gold hover:text-white transition-colors duration-300"
               >
-                Дізнатися більше
+                Замовити зараз
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

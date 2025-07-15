@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { initGoogleAds, trackPageView, trackScroll, trackPageLoad } from './utils/analytics';
 import Header from './components/Header';
 import Services from './components/Services';
 import AboutMe from './components/AboutMe';
@@ -15,6 +16,41 @@ import ThankYouPage from './components/ThankYouPage';
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [showExitPopup, setShowExitPopup] = useState(false);
+
+  // Ініціалізація Google Ads
+  React.useEffect(() => {
+    initGoogleAds();
+    trackPageLoad();
+  }, []);
+
+  // Відстеження скролу сторінки
+  React.useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+    const scrollPercentages = [25, 50, 75, 100];
+    const trackedPercentages = new Set<number>();
+
+    const handleScroll = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+
+        scrollPercentages.forEach(percentage => {
+          if (scrollPercent >= percentage && !trackedPercentages.has(percentage)) {
+            trackScroll(percentage);
+            trackedPercentages.add(percentage);
+          }
+        });
+      }, 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, []);
 
   // Handle exit intent
   React.useEffect(() => {
@@ -34,6 +70,10 @@ function App() {
 
   const HomePage = () => (
     <>
+      {React.useEffect(() => {
+        trackPageView('Home Page', window.location.href);
+      }, [])}
+      
       <Header onOrderClick={() => setShowModal(true)} />
       
       {/* Hero Section */}

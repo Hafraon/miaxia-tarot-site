@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { tarotCards } from '../data/tarotCards';
+import { trackCardDraw, trackButtonClick } from '../utils/analytics';
 
 interface CardOfDayProps {
   onFullReadingClick: () => void;
@@ -10,6 +11,9 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick }) => {
   const [selectedCard, setSelectedCard] = useState<typeof tarotCards[number] | null>(null);
 
   const handleDraw = () => {
+    // Відстеження витягування карти
+    trackCardDraw();
+    
     // Reset state if already drawn
     if (isFlipped) {
       setIsFlipped(false);
@@ -89,6 +93,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick }) => {
               <button 
                 onClick={handleDraw}
                 className="btn-primary group"
+                onMouseDown={() => trackButtonClick('draw_card', 'card_of_day')}
               >
                 <span className="relative z-10 flex items-center">
                   Витягнути карту
@@ -99,6 +104,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick }) => {
               <button 
                 onClick={onFullReadingClick}
                 className="btn-primary"
+                onMouseDown={() => trackButtonClick('get_full_reading', 'card_of_day')}
               >
                 Отримати повний розклад
               </button>

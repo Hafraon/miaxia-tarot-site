@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Mail, Instagram, GitBranch as BrandTiktok, MessageCircle, Send } from 'lucide-react';
+import { trackSocialClick } from '../utils/analytics';
 
 const Footer: React.FC = () => {
   return (
@@ -50,6 +51,7 @@ const Footer: React.FC = () => {
                 href="https://www.instagram.com/miaxialip?igsh=bzF5bGZ6N3N3ODRt&utm_source=qr" 
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackSocialClick('instagram', 'click')}
                 className="bg-darkblue/70 p-3 rounded-full border border-purple/40 hover:border-gold/50 hover:text-gold transition-all duration-300 group flex items-center justify-center"
                 title="Instagram"
               >
@@ -59,6 +61,7 @@ const Footer: React.FC = () => {
                 href="https://www.tiktok.com/@miaxialip2?_t=ZM-8w4vRCs4x8f&_r=1" 
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackSocialClick('tiktok', 'click')}
                 className="bg-darkblue/70 p-3 rounded-full border border-purple/40 hover:border-gold/50 hover:text-gold transition-all duration-300 group flex items-center justify-center"
                 title="TikTok"
               >
@@ -68,6 +71,7 @@ const Footer: React.FC = () => {
                 href="https://t.me/miaxialip_tarot_bot" 
                 target="_blank"
                 rel="noopener noreferrer"
+               onClick={() => trackSocialClick('telegram', 'bot_click')}
                 className="bg-darkblue/70 p-3 rounded-full border border-purple/40 hover:border-gold/50 hover:text-gold transition-all duration-300 group flex items-center justify-center"
                 title="Telegram Bot"
               >
@@ -77,6 +81,7 @@ const Footer: React.FC = () => {
                 href="https://t.me/miaxiataro" 
                 target="_blank"
                 rel="noopener noreferrer"
+               onClick={() => trackSocialClick('telegram', 'channel_click')}
                 className="bg-darkblue/70 p-3 rounded-full border border-purple/40 hover:border-gold/50 hover:text-gold transition-all duration-300 group flex items-center justify-center"
                 title="Telegram Channel"
               >
