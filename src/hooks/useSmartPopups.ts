@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { TelegramService, TelegramMessage } from '../utils/telegramService';
 import { LeadScore } from './useLeadScoring';
 
 export type PopupType = 'exit-intent' | 'time-based' | 'behavior-based' | 'high-engagement';
@@ -108,24 +109,27 @@ const useSmartPopups = (leadScore: LeadScore) => {
 
   const handlePopupSubmit = useCallback(async (data: { name: string; phone: string; email: string }) => {
     try {
-      // Send to Telegram
-      if (window.sendToTelegram) {
-        const message = `
-🎯 Smart Popup Lead (${popupState.type?.toUpperCase()})
+      // Підготовка даних для Telegram
+      const telegramData: TelegramMessage = {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        formType: 'popup',
+        leadScore: leadScore.totalScore,
+        analytics: {
+          timeOnSite: leadScore.timeOnSite,
+          source: document.referrer || 'direct',
+          completionTime: 5000, // Popup forms are quick
+          interactions: leadScore.interactions,
+          userAgent: navigator.userAgent
+        }
+      };
 
-👤 Ім'я: ${data.name}
-📱 Телефон: ${data.phone}
-📧 Email: ${data.email || 'Не вказано'}
-
-📊 Лід-скор: ${leadScore.totalScore} (${leadScore.level.toUpperCase()})
-⏱️ Час на сайті: ${Math.floor(leadScore.timeOnSite / 60)}:${(leadScore.timeOnSite % 60).toString().padStart(2, '0')}
-📜 Прокрутка: ${leadScore.scrollDepth}%
-🖱️ Взаємодії: ${leadScore.interactions}
-
-🎯 Тип попапу: ${popupState.type}
-        `.trim();
-
-        await window.sendToTelegram(message);
+      // Відправка через TelegramService
+      const result = await TelegramService.sendMessage(telegramData);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send popup data');
       }
 
       // Track conversion

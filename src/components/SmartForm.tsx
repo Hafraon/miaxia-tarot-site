@@ -14,14 +14,14 @@ interface FormField {
 interface SmartFormProps {
   formType: 'quick' | 'detailed' | 'newsletter';
   onSubmit: (data: any) => Promise<void>;
+  disabled?: boolean;
   className?: string;
 }
 
-const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, className = '' }) => {
+const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = false, className = '' }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [analytics, setAnalytics] = useState({
     startTime: Date.now(),
@@ -225,11 +225,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, className = '
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!validateForm() || disabled) {
       return;
     }
-
-    setIsSubmitting(true);
 
     try {
       // Add analytics data
@@ -251,8 +249,6 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, className = '
       
     } catch (error) {
       console.error('Form submission error:', error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -347,14 +343,14 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, className = '
         {/* Submit button */}
         <button
           type="submit"
-          disabled={isSubmitting || progress < 100}
+          disabled={disabled || progress < 100}
           className={`w-full py-3 px-6 rounded-md font-semibold transition-all duration-300 ${
-            isSubmitting || progress < 100
+            disabled || progress < 100
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'btn-primary hover:shadow-lg transform hover:-translate-y-1'
           }`}
         >
-          {isSubmitting ? (
+          {disabled ? (
             <span className="flex items-center justify-center">
               <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

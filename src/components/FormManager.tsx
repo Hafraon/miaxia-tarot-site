@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SmartForm from './SmartForm';
+import { TelegramService, TelegramMessage } from '../utils/telegramService';
 import { trackFormStart, trackFormSubmit, trackOrderFormConversion, trackQuickOrderConversion } from '../utils/analytics';
 
 interface FormManagerProps {
@@ -18,40 +19,34 @@ const FormManager: React.FC<FormManagerProps> = ({
   const [activeFormType, setActiveFormType] = useState<'quick' | 'detailed' | 'newsletter'>(defaultType);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormSubmit = async (data: any) => {
     try {
+      setIsSubmitting(true);
       setSubmitStatus('idle');
       setSubmitMessage('');
 
       // Track form submission
       trackFormSubmit(`${data.formType}_form`, data.service || 'consultation');
 
-      // Format message for Telegram
-      const message = formatTelegramMessage(data);
+      // Підготовка даних для Telegram
+      const telegramData: TelegramMessage = {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        instagram: data.instagram,
+        birthdate: data.birthdate,
+        question: data.question,
+        service: data.service,
+        formType: data.formType,
+        analytics: data.analytics
+      };
 
-      // Send to Telegram
-      const response = await fetch('/api/send-telegram', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: data.name,
-          phone: data.phone,
-          instagram: data.instagram,
-          service: data.service,
-          birthdate: data.birthdate,
-          question: data.question,
-          email: data.email,
-          formType: data.formType,
-          analytics: data.analytics
-        }),
-      });
+      // Відправка через TelegramService
+      const result = await TelegramService.sendMessage(telegramData);
 
-      const result = await response.json();
-
-      if (response.ok && result.success) {
+      if (result.success) {
         // Track conversion based on form type
         if (data.formType === 'quick') {
           trackQuickOrderConversion('Швидка консультація', 300);
@@ -60,7 +55,7 @@ const FormManager: React.FC<FormManagerProps> = ({
         }
 
         setSubmitStatus('success');
-        setSubmitMessage('Заявка успішно відправлена! Перенаправляємо...');
+        setSubmitMessage(result.message || 'Заявка успішно відправлена! Перенаправляємо...');
 
         // Handle success
         if (onSuccess) {
@@ -77,11 +72,13 @@ const FormManager: React.FC<FormManagerProps> = ({
       console.error('Form submission error:', error);
       setSubmitStatus('error');
       
-      if (error.message.includes('валідації')) {
-        setSubmitMessage('Помилка валідації даних. Перевірте правильність заповнення полів.');
+      if (error.message.includes('Network')) {
+        setSubmitMessage('Проблеми з мережею. Перевірте з\'єднання та спробуйте ще раз.');
       } else {
-        setSubmitMessage('Виникла помилка при відправці. Будь ласка, спробуйте пізніше.');
+        setSubmitMessage(error.message || 'Виникла помилка при відправці. Спробуйте пізніше.');
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -160,50 +157,26 @@ const FormManager: React.FC<FormManagerProps> = ({
 
       {/* Status message */}
       {submitMessage && (
-        <div className={`mb-6 p-4 rounded-md border ${
+        <div className={`mb-6 p-4 rounded-md border animate-pulse ${
           submitStatus === 'success' 
             ? 'bg-green-900/20 border-green-500/30 text-green-400' 
             : 'bg-red-900/20 border-red-500/30 text-red-400'
         }`}>
-          {submitMessage}
+          <div className="flex items-center">
+            {submitStatus === 'success' ? '✅' : '❌'} {submitMessage}
+          </div>
         </div>
       )}
 
-      {/* Active form */}
-      <SmartForm
-        formType={activeFormType}
-        onSubmit={handleFormSubmit}
-      />
-
-      {/* Form descriptions */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-        <div className={`p-3 rounded-lg border transition-all duration-300 ${
-          activeFormType === 'quick' 
-            ? 'border-gold/50 bg-gold/10' 
-            : 'border-purple/30 bg-purple/10'
-        }`}>
-          <h4 className="font-semibold text-gold mb-1">⚡ Швидка заявка</h4>
-          <p className="text-gray-300">Тільки ім'я та телефон. Ідеально для швидкого зв'язку.</p>
+      {/* Loading indicator */}
+      {isSubmitting && (
+        <div className="mb-6 p-4 rounded-md border border-gold/30 bg-gold/10 text-gold">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin mr-2">⌛</div>
+            Відправляємо...
+          </div>
         </div>
-        
-        <div className={`p-3 rounded-lg border transition-all duration-300 ${
-          activeFormType === 'detailed' 
-            ? 'border-gold/50 bg-gold/10' 
-            : 'border-purple/30 bg-purple/10'
-        }`}>
-          <h4 className="font-semibold text-gold mb-1">📋 Детальна заявка</h4>
-          <p className="text-gray-300">Повна інформація для якісної консультації таро.</p>
-        </div>
-        
-        <div className={`p-3 rounded-lg border transition-all duration-300 ${
-          activeFormType === 'newsletter' 
-            ? 'border-gold/50 bg-gold/10' 
-            : 'border-purple/30 bg-purple/10'
-        }`}>
-          <h4 className="font-semibold text-gold mb-1">📧 Розсилка</h4>
-          <p className="text-gray-300">Отримуйте новини, акції та безкоштовні прогнози.</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

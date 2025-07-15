@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getRandomCard, getMultipleCards, TarotCard } from '../data/majorArcana';
+import { TelegramService, TelegramMessage } from '../utils/telegramService';
 import { trackCardDraw, trackButtonClick } from '../utils/analytics';
 import AdvancedTarotCard from './AdvancedTarotCard';
 
@@ -18,6 +19,9 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
   const handleDrawSingle = () => {
     trackCardDraw();
     onCardDraw?.();
+    
+    // Відправка в Telegram про витягування карти
+    sendCardDrawNotification('single');
     
     // Reset if already drawn
     if (isFlipped) {
@@ -43,6 +47,9 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
     trackButtonClick(`draw_${count}_cards`, 'card_of_day');
     onCardDraw?.();
     
+    // Відправка в Telegram про витягування кількох карт
+    sendCardDrawNotification(`multiple_${count}`);
+    
     // Reset state
     setIsFlipped(false);
     setSelectedCard(null);
@@ -66,6 +73,32 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
     setShowMultiple(false);
     setMultipleCards([]);
     setFlippedCards(new Set());
+  };
+
+  const sendCardDrawNotification = async (type: string) => {
+    try {
+      const telegramData: TelegramMessage = {
+        name: 'Анонімний користувач',
+        phone: 'Не вказано',
+        formType: 'card_draw',
+        service: `Витягування карти: ${type}`,
+        analytics: {
+          timeOnSite: Math.floor((Date.now() - performance.now()) / 1000),
+          source: document.referrer || 'direct',
+          completionTime: 1000,
+          interactions: 1,
+          userAgent: navigator.userAgent
+        }
+      };
+
+      // Відправляємо без очікування результату (фонова задача)
+      TelegramService.sendMessage(telegramData).catch(error => {
+        console.log('Card draw notification failed (non-critical):', error);
+      });
+    } catch (error) {
+      // Ігноруємо помилки - це не критично
+      console.log('Card draw notification error (non-critical):', error);
+    }
   };
 
   return (
