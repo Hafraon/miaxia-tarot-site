@@ -1,238 +1,187 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Gift, Clock, Star, Crown } from 'lucide-react';
-import { LeadScore } from '../hooks/useLeadScoring';
-
-export type PopupType = 'exit-intent' | 'time-based' | 'behavior-based' | 'high-engagement';
+// components/SmartPopup.tsx - ВИПРАВЛЕНА ВЕРСІЯ
+import React, { useState, useRef } from 'react';
+import { X, Crown } from 'lucide-react';
 
 interface SmartPopupProps {
-  isOpen: boolean;
+  isVisible: boolean;
+  popupData: {
+    type: 'vip' | 'hot' | 'warm' | 'cold';
+    title: string;
+    subtitle: string;
+    leadScore: number;
+    timeOnSite: number;
+    buttonText: string;
+    backgroundColor: string;
+  };
   onClose: () => void;
-  type: PopupType;
-  leadScore: LeadScore;
-  onSubmit: (data: { name: string; phone: string; email: string }) => void;
+  onSubmit: (data: any) => void;
 }
 
-const SmartPopup: React.FC<SmartPopupProps> = ({ isOpen, onClose, type, leadScore, onSubmit }) => {
-  const popupRef = useRef<HTMLDivElement>(null);
+const SmartPopup: React.FC<SmartPopupProps> = ({ isVisible, popupData, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const popupContentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen, onClose]);
-
-  const getPopupConfig = () => {
-    switch (type) {
-      case 'exit-intent':
-        return {
-          title: 'Зачекайте! Не йдіть без подарунка! 🎁',
-          subtitle: 'Отримайте безкоштовну консультацію таро',
-          offer: 'Безкоштовна консультація',
-          gradient: 'from-red-600 to-pink-600',
-          icon: <Gift className="h-8 w-8" />,
-          urgency: 'Тільки для тих, хто хотів піти!'
-        };
-      case 'time-based':
-        return {
-          title: '3 хвилини на сайті - це знак! ⏰',
-          subtitle: 'Всесвіт посилає вам сигнал',
-          offer: 'Спеціальна знижка 50%',
-          gradient: 'from-blue-600 to-purple-600',
-          icon: <Clock className="h-8 w-8" />,
-          urgency: 'Пропозиція діє лише 5 хвилин!'
-        };
-      case 'behavior-based':
-        return {
-          title: 'Ви активно досліджуєте! ⭐',
-          subtitle: 'Час зробити наступний крок',
-          offer: 'Персональна консультація',
-          gradient: 'from-purple-600 to-indigo-600',
-          icon: <Star className="h-8 w-8" />,
-          urgency: 'Для активних користувачів'
-        };
-      case 'high-engagement':
-        return {
-          title: 'VIP пропозиція для вас! 👑',
-          subtitle: 'Ви заслуговуєте на найкраще',
-          offer: 'Ексклюзивна консультація',
-          gradient: 'from-gold to-yellow-500',
-          icon: <Crown className="h-8 w-8" />,
-          urgency: 'Тільки для VIP клієнтів'
-        };
-      default:
-        return {
-          title: 'Спеціальна пропозиція!',
-          subtitle: 'Не пропустіть можливість',
-          offer: 'Консультація таро',
-          gradient: 'from-purple-600 to-blue-600',
-          icon: <Gift className="h-8 w-8" />,
-          urgency: 'Обмежена пропозиция'
-        };
-    }
-  };
-
-  const config = getPopupConfig();
+  if (!isVisible) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone) return;
+    
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      alert('Будь ласка, заповніть обов\'язкові поля');
+      return;
+    }
 
     setIsSubmitting(true);
+    
     try {
-      await onSubmit(formData);
+      await onSubmit({
+        ...formData,
+        source: `Smart Popup - ${popupData.type.toUpperCase()}`,
+        leadScore: popupData.leadScore,
+        timeOnSite: popupData.timeOnSite
+      });
+      
       onClose();
     } catch (error) {
-      console.error('Error submitting popup form:', error);
+      console.error('Помилка відправки:', error);
+      alert('Помилка відправки. Спробуйте ще раз.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+  // ВИПРАВЛЕНО: Обробка кліків тільки по фону, НЕ по вмісту
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    // Закриваємо тільки якщо клік був по фону (backdrop), а не по вмісту попапу
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
-  if (!isOpen) return null;
+  // ВИПРАВЛЕНО: Зупинка propagation для внутрішнього контенту
+  const handleContentClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  const getIcon = () => {
+    switch (popupData.type) {
+      case 'vip':
+        return <Crown className="w-6 h-6 text-yellow-300" />;
+      default:
+        return <span className="text-2xl">🎁</span>;
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-      
-      {/* Popup */}
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick} // ТІЛЬКИ ТУТ обробляємо закриття
+    >
       <div 
-        ref={popupRef}
-        className="relative max-w-md w-full bg-darkblue rounded-2xl shadow-2xl overflow-hidden animate-[popupAppear_0.5s_ease-out]"
+        ref={popupContentRef}
+        className={`${popupData.backgroundColor} p-6 rounded-xl max-w-md w-full mx-4 relative shadow-2xl`}
+        onClick={handleContentClick} // ЗУПИНЯЄМО propagation для контенту
       >
-        {/* Gradient Header */}
-        <div className={`bg-gradient-to-r ${config.gradient} p-6 text-white relative overflow-hidden`}>
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="relative z-10">
-            <button 
-              onClick={onClose}
-              className="absolute top-0 right-0 text-white/80 hover:text-white text-2xl leading-none"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            
-            <div className="flex items-center gap-3 mb-3">
-              {config.icon}
-              <div className="text-xs bg-white/20 px-2 py-1 rounded-full">
-                Лід-скор: {leadScore.totalScore} ({leadScore.level.toUpperCase()})
-              </div>
-            </div>
-            
-            <h2 className="text-2xl font-bold mb-2">{config.title}</h2>
-            <p className="text-white/90">{config.subtitle}</p>
+        {/* Кнопка закриття */}
+        <button 
+          onClick={onClose} // Пряме закриття без propagation
+          className="absolute top-4 right-4 text-white/80 hover:text-white text-xl transition-colors"
+          type="button"
+        >
+          <X size={24} />
+        </button>
+
+        {/* Заголовок */}
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center mb-3">
+            {getIcon()}
+            <span className="ml-2 text-lg font-medium text-white/90">
+              Лід-скор: {popupData.leadScore} ({popupData.type.toUpperCase()})
+            </span>
           </div>
           
-          {/* Animated background elements */}
-          <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
-          <div className="absolute -bottom-5 -left-5 w-15 h-15 bg-white/5 rounded-full animate-pulse delay-1000"></div>
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {popupData.title}
+          </h2>
+          
+          <p className="text-white/80 text-sm">
+            {popupData.subtitle}
+          </p>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
-          {/* Offer highlight */}
-          <div className="bg-gold/10 border border-gold/30 rounded-lg p-4 mb-6 text-center">
-            <div className="text-gold font-bold text-lg mb-1">{config.offer}</div>
-            <div className="text-sm text-gray-300">{config.urgency}</div>
+        {/* Додатковий блок для VIP */}
+        {popupData.type === 'vip' && (
+          <div className="bg-yellow-400 text-black p-3 rounded-lg mb-4 text-center">
+            <h3 className="font-bold text-sm">Ексклюзивна консультація</h3>
+            <p className="text-xs">Тільки для VIP клієнтів</p>
+          </div>
+        )}
+
+<form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Ваше ім'я *"
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onClick={handleContentClick} // ЗУПИНЯЄМО propagation
+              onFocus={handleContentClick} // ЗУПИНЯЄМО propagation
+              required
+              disabled={isSubmitting}
+              className="w-full p-3 rounded-lg bg-white/15 text-white placeholder-white/60 border border-white/20 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50"
+            />
+          </div>
+          
+          <div>
+            <input
+              type="tel"
+              placeholder="Телефон *"
+              value={formData.phone}
+              onChange={(e) => setFormData({...formData, phone: e.target.value})}
+              onClick={handleContentClick} // ЗУПИНЯЄМО propagation
+              onFocus={handleContentClick} // ЗУПИНЯЄМО propagation
+              required
+              disabled={isSubmitting}
+              className="w-full p-3 rounded-lg bg-white/15 text-white placeholder-white/60 border border-white/20 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50"
+            />
+          </div>
+          
+          <div>
+            <input
+              type="email"
+              placeholder="Email (опціонально)"
+              value={formData.email}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onClick={handleContentClick} // ЗУПИНЯЄМО propagation
+              onFocus={handleContentClick} // ЗУПИНЯЄМО propagation
+              disabled={isSubmitting}
+              className="w-full p-3 rounded-lg bg-white/15 text-white placeholder-white/60 border border-white/20 focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50"
+            />
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Ваше ім'я *"
-                className="w-full bg-darkblue/60 border border-purple/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gold/60"
-                required
-              />
-            </div>
-            
-            <div>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Телефон *"
-                className="w-full bg-darkblue/60 border border-purple/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gold/60"
-                required
-              />
-            </div>
-            
-            <div>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email (опціонально)"
-                className="w-full bg-darkblue/60 border border-purple/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-gold/60"
-              />
-            </div>
+          <button 
+            type="submit"
+            disabled={isSubmitting || !formData.name.trim() || !formData.phone.trim()}
+            onClick={handleContentClick} // ЗУПИНЯЄМО propagation
+            className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-3 px-6 rounded-lg hover:from-yellow-500 hover:to-orange-600 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            {isSubmitting ? 'Відправляємо...' : popupData.buttonText}
+          </button>
+        </form>
 
-            <button
-              type="submit"
-              disabled={isSubmitting || !formData.name || !formData.phone}
-              className={`w-full bg-gradient-to-r ${config.gradient} text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {isSubmitting ? 'Надсилання...' : 'Отримати пропозицію'}
-            </button>
-          </form>
-
-          {/* Trust indicators */}
-          <div className="mt-4 text-center text-xs text-gray-400">
-            <p>🔒 Ваші дані захищені • ⚡ Відповідь протягом 15 хвилин</p>
-          </div>
+        {/* Гарантії */}
+        <div className="flex items-center justify-center mt-4 text-xs text-white/60">
+          <span className="mr-2">🔒</span>
+          <span>Ваші дані захищені</span>
+          <span className="mx-2">⚡</span>
+          <span>Відповідь протягом 15 хвилин</span>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes popupAppear {
-          from {
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 };
