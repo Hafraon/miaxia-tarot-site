@@ -51,13 +51,6 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
         </nav>
         
         <button onClick={onOrderClick} className="hidden md:block btn-primary">
-        <button 
-          onClick={() => {
-            trackButtonClick('order_reading', 'header');
-            onOrderClick();
-          }} 
-          className="hidden md:block btn-primary"
-        >
           Замовити розклад
         </button>
       </div>
@@ -73,6 +66,8 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
           <a href="#testimonials" className="nav-link block py-2" onClick={() => setIsMobileMenuOpen(false)}>Відгуки</a>
           <a href="#contact" className="nav-link block py-2" onClick={() => setIsMobileMenuOpen(false)}>Контакти</a>
           <button onClick={() => {onOrderClick(); setIsMobileMenuOpen(false);}} className="btn-primary w-full text-center">
+            Замовити розклад
+          </button>
           <button 
             onClick={() => {
               trackButtonClick('order_reading', 'mobile_menu');
