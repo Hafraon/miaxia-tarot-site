@@ -72,18 +72,17 @@ const OrderForm: React.FC = () => {
     
     setIsSubmitting(true);
     
-    // Send form data to API
-    fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
+    // Send form data to Express API
+    fetch('/api/send-telegram', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         name: formData.name,
         phone: formData.phone,
         instagram: formData.instagram,
-        service: 'Order Form Submission',
+        service: 'Повна форма замовлення',
         birthdate: formData.birthdate,
         question: formData.question
       }),
