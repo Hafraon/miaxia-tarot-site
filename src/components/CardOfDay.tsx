@@ -17,6 +17,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
 
   const handleDrawSingle = () => {
+    console.log('🔮 Витягування одиночної карти...');
     trackCardDraw();
     onCardDraw?.();
     
@@ -33,17 +34,20 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
       
       setTimeout(() => {
         const card = getRandomCard();
+        console.log('✅ Обрана карта:', card.name);
         setSelectedCard(card);
         setIsFlipped(true);
       }, 300);
     } else {
       const card = getRandomCard();
+      console.log('✅ Обрана карта:', card.name);
       setSelectedCard(card);
       setIsFlipped(true);
     }
   };
 
   const handleDrawMultiple = (count: number) => {
+    console.log(`🔮 Витягування ${count} карт...`);
     trackButtonClick(`draw_${count}_cards`, 'card_of_day');
     onCardDraw?.();
     
@@ -58,16 +62,25 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
     
     setTimeout(() => {
       const cards = getMultipleCards(count);
+      console.log(`✅ Обрані карти (${count}):`, cards.map(c => c.name));
       setMultipleCards(cards);
       setShowMultiple(true);
     }, 300);
   };
 
   const handleCardFlip = (cardIndex: number) => {
+    console.log(`🔄 Перевертання карти ${cardIndex}`);
     setFlippedCards(prev => new Set([...prev, cardIndex]));
   };
 
+  // ВИПРАВЛЕНО: дозволяємо перевертати одиночну карту
+  const handleSingleCardFlip = () => {
+    console.log('🔄 Перевертання одиночної карти');
+    setIsFlipped(prev => !prev);
+  };
+
   const resetAll = () => {
+    console.log('🔄 Скидання всіх карт');
     setIsFlipped(false);
     setSelectedCard(null);
     setShowMultiple(false);
@@ -110,12 +123,13 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
             Відкрийте таємниці Великих Арканів. Витягніть карту дня або створіть повний розклад для глибшого розуміння.
           </p>
           
-          {/* Control Buttons */}
+          {/* Control Buttons - ВИПРАВЛЕНО: додані діагностичні логи */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <button 
               onClick={handleDrawSingle}
               className="btn-primary group"
               onMouseDown={() => trackButtonClick('draw_single_card', 'card_of_day')}
+              style={{ pointerEvents: 'auto' }}
             >
               <span className="relative z-10 flex items-center">
                 {isFlipped ? 'Нова карта' : 'Карта дня'}
@@ -126,6 +140,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
             <button 
               onClick={() => handleDrawMultiple(3)}
               className="bg-purple hover:bg-purple/80 text-white px-6 py-3 rounded-md font-medium transition-all duration-300 hover:shadow-[0_0_15px_rgba(74,26,116,0.6)] transform hover:-translate-y-1"
+              style={{ pointerEvents: 'auto' }}
             >
               3 карти ✨
             </button>
@@ -133,6 +148,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
             <button 
               onClick={() => handleDrawMultiple(5)}
               className="bg-gold/20 hover:bg-gold/30 text-gold border border-gold/50 px-6 py-3 rounded-md font-medium transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transform hover:-translate-y-1"
+              style={{ pointerEvents: 'auto' }}
             >
               5 карт 🌟
             </button>
@@ -141,6 +157,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
               <button 
                 onClick={resetAll}
                 className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-3 rounded-md font-medium transition-all duration-300"
+                style={{ pointerEvents: 'auto' }}
               >
                 Скинути 🔄
               </button>
@@ -148,13 +165,13 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
           </div>
         </div>
         
-        {/* Single Card Display */}
+        {/* Single Card Display - ВИПРАВЛЕНО: дозволяємо перевертати карту */}
         {!showMultiple && (
           <div className="flex flex-col items-center justify-center gap-8">
             <AdvancedTarotCard
               card={selectedCard}
               isFlipped={isFlipped}
-              onFlip={() => {}}
+              onFlip={handleSingleCardFlip} // ВИПРАВЛЕНО: працююча функція замість порожньої
               size="large"
               showDetails={true}
             />
@@ -245,6 +262,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
                 onClick={onFullReadingClick}
                 className="btn-primary"
                 onMouseDown={() => trackButtonClick('get_full_reading', 'card_of_day')}
+                style={{ pointerEvents: 'auto' }}
               >
                 Замовити повну консультацію
               </button>
@@ -255,6 +273,7 @@ const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw })
                 rel="noopener noreferrer"
                 className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-md font-medium transition-all duration-300 hover:shadow-[0_0_15px_rgba(37,99,235,0.6)] transform hover:-translate-y-1 flex items-center justify-center"
                 onMouseDown={() => trackButtonClick('telegram_bot', 'card_of_day')}
+                style={{ pointerEvents: 'auto' }}
               >
                 Telegram бот зі знижками 🤖
               </a>
