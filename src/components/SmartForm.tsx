@@ -33,6 +33,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     userAgent: navigator.userAgent
   });
 
+  console.log('🎯 SmartForm рендериться:', { formType, disabled });
+
   // Field configurations for different form types
   const getFormFields = (): FormField[] => {
     const baseFields: Record<string, FormField> = {
@@ -137,6 +139,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
 
   // Load saved data from localStorage
   useEffect(() => {
+    console.log(`📝 Ініціалізація форми типу: ${formType}`);
+    
     // Track form open
     leadTracker.trackFormOpen(formType);
     
@@ -144,17 +148,19 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
+        console.log('📂 Завантажено збережені дані форми:', parsed);
         setFormData(parsed);
       } catch (error) {
-        console.error('Error loading saved form data:', error);
+        console.error('❌ Помилка завантаження збережених даних форми:', error);
       }
     }
-  }, [formType]);
+  }, [formType, leadTracker]);
 
   // Save data to localStorage
   useEffect(() => {
     if (Object.keys(formData).length > 0) {
       localStorage.setItem(`miaxialip_form_${formType}`, JSON.stringify(formData));
+      console.log('💾 Дані форми збережено в localStorage');
     }
   }, [formData, formType]);
 
@@ -166,17 +172,23 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     ).length;
     const newProgress = (filledRequired / requiredFields.length) * 100;
     setProgress(newProgress);
+    
+    console.log(`📊 Прогрес форми: ${Math.round(newProgress)}% (${filledRequired}/${requiredFields.length})`);
   }, [formData, errors, fields]);
 
   // Real-time validation
   const validateField = useCallback((field: FormField, value: string): string | null => {
     if (field.validation) {
-      return field.validation(value);
+      const error = field.validation(value);
+      console.log(`✅ Валідація поля ${field.name}:`, error || 'OK');
+      return error;
     }
     return null;
   }, []);
 
   const handleChange = (fieldName: string, value: string) => {
+    console.log(`📝 Зміна поля ${fieldName}:`, value);
+    
     setFormData(prev => ({ ...prev, [fieldName]: value }));
     
     // Track field interaction in lead tracker
@@ -203,6 +215,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
   };
 
   const handleBlur = (fieldName: string) => {
+    console.log(`👁️ Blur на полі: ${fieldName}`);
+    
     setTouched(prev => ({ ...prev, [fieldName]: true }));
     
     const field = fields.find(f => f.name === fieldName);
@@ -216,6 +230,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
   };
 
   const validateForm = (): boolean => {
+    console.log('🔍 Валідація всієї форми...');
+    
     const newErrors: Record<string, string> = {};
     let isValid = true;
 
@@ -228,13 +244,17 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     });
 
     setErrors(newErrors);
+    
+    console.log('🔍 Результат валідації:', { isValid, errors: newErrors });
     return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('📤 Відправка SmartForm...');
     
     if (!validateForm() || disabled) {
+      console.warn('⚠️ Форма не пройшла валідацію або вимкнена');
       return;
     }
 
@@ -250,14 +270,16 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         }
       };
 
+      console.log('📤 Відправка даних:', submissionData);
       await onSubmit(submissionData);
       
       // Clear form and localStorage on success
+      console.log('✅ Форма успішно відправлена, очищення...');
       setFormData({});
       localStorage.removeItem(`miaxialip_form_${formType}`);
       
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('❌ Помилка відправки SmartForm:', error);
     }
   };
 
@@ -310,9 +332,15 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
                   onBlur={() => handleBlur(field.name)}
                   placeholder={field.placeholder}
                   rows={4}
-                  className={`w-full pl-12 pr-4 py-3 bg-darkblue/60 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all duration-300 resize-none ${
+                  disabled={disabled}
+                  className={`w-full pl-12 pr-4 py-3 bg-darkblue/60 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all duration-300 resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors[field.name] ? 'border-accent' : 'border-purple/30'
                   }`}
+                  style={{ 
+                    pointerEvents: disabled ? 'none' : 'auto',
+                    userSelect: 'text',
+                    fontSize: '16px'
+                  }}
                 />
               ) : (
                 <input
@@ -321,9 +349,15 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
                   onChange={(e) => handleChange(field.name, e.target.value)}
                   onBlur={() => handleBlur(field.name)}
                   placeholder={field.placeholder}
-                  className={`w-full pl-12 pr-4 py-3 bg-darkblue/60 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all duration-300 ${
+                  disabled={disabled}
+                  className={`w-full pl-12 pr-4 py-3 bg-darkblue/60 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors[field.name] ? 'border-accent' : 'border-purple/30'
                   }`}
+                  style={{ 
+                    pointerEvents: disabled ? 'none' : 'auto',
+                    userSelect: 'text',
+                    fontSize: '16px'
+                  }}
                 />
               )}
               
@@ -349,7 +383,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
           </div>
         ))}
 
-        {/* Submit button */}
+        {/* Submit button - ВИПРАВЛЕНО: покращена логіка */}
         <button
           type="submit"
           disabled={disabled || progress < 100}
@@ -358,6 +392,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'btn-primary hover:shadow-lg transform hover:-translate-y-1'
           }`}
+          style={{ pointerEvents: 'auto' }}
         >
           {disabled ? (
             <span className="flex items-center justify-center">
@@ -367,6 +402,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
               </svg>
               Надсилання...
             </span>
+          ) : progress < 100 ? (
+            `Заповніть обов'язкові поля (${Math.round(progress)}%)`
           ) : (
             `Відправити ${formType === 'newsletter' ? 'підписку' : 'заявку'}`
           )}
@@ -377,6 +414,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
           <p>🔒 Ваші дані захищені та не передаються третім особам</p>
           {formType !== 'newsletter' && (
             <p className="mt-1">⚡ Відповідь протягом 2-3 годин</p>
+          )}
+          {Object.keys(formData).length > 0 && (
+            <p className="mt-1">💾 Прогрес автоматично збережено</p>
           )}
         </div>
       </form>
