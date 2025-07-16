@@ -1,189 +1,288 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SmartForm from './SmartForm';
+import { getRandomCard, getMultipleCards, TarotCard } from '../data/majorArcana';
 import { TelegramService, TelegramMessage } from '../utils/telegramService';
-import { trackFormStart, trackFormSubmit, trackOrderFormConversion, trackQuickOrderConversion } from '../utils/analytics';
-import useLeadTracker from '../hooks/useLeadTracker';
+import { trackCardDraw, trackButtonClick } from '../utils/analytics';
+import AdvancedTarotCard from './AdvancedTarotCard';
 
-interface FormManagerProps {
-  defaultType?: 'quick' | 'detailed' | 'newsletter';
-  onSuccess?: () => void;
-  className?: string;
+interface CardOfDayProps {
+  onFullReadingClick: () => void;
+  onCardDraw?: () => void;
 }
 
-const FormManager: React.FC<FormManagerProps> = ({ 
-  defaultType = 'detailed', 
-  onSuccess,
-  className = '' 
-}) => {
-  const navigate = useNavigate();
-  const leadTracker = useLeadTracker();
-  const [activeFormType, setActiveFormType] = useState<'quick' | 'detailed' | 'newsletter'>(defaultType);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [submitMessage, setSubmitMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const CardOfDay: React.FC<CardOfDayProps> = ({ onFullReadingClick, onCardDraw }) => {
+  const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [multipleCards, setMultipleCards] = useState<TarotCard[]>([]);
+  const [showMultiple, setShowMultiple] = useState(false);
+  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
 
-  const handleFormSubmit = async (data: any) => {
-    try {
-      setIsSubmitting(true);
-      setSubmitStatus('idle');
-      setSubmitMessage('');
-
-      // Track form submission in lead tracker
-      leadTracker.trackFormSubmit(data.formType);
-
-      // Track form submission
-      trackFormSubmit(`${data.formType}_form`, data.service || 'consultation');
-
-      // Підготовка даних для Telegram
-      const telegramData: TelegramMessage = {
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
-        instagram: data.instagram,
-        birthdate: data.birthdate,
-        question: data.question,
-        service: data.service,
-        formType: data.formType,
-        analytics: data.analytics
-      };
-
-      // Відправка через TelegramService
-      const result = await TelegramService.sendMessage(telegramData);
-
-      if (result.success) {
-        // Track conversion based on form type
-        if (data.formType === 'quick') {
-          trackQuickOrderConversion('Швидка консультація', 300);
-        } else if (data.formType === 'detailed') {
-          trackOrderFormConversion('Детальна консультація', 500);
-        }
-
-        setSubmitStatus('success');
-        setSubmitMessage(result.message || 'Заявка успішно відправлена! Перенаправляємо...');
-
-        // Handle success
-        if (onSuccess) {
-          setTimeout(onSuccess, 2000);
-        } else {
-          setTimeout(() => {
-            navigate('/thank-you');
-          }, 2000);
-        }
-      } else {
-        throw new Error(result.error || 'Помилка відправки');
-      }
-    } catch (error: any) {
-      console.error('Form submission error:', error);
-      setSubmitStatus('error');
+  const handleDrawSingle = () => {
+    console.log('🔮 Витягування одиночної карти...');
+    trackCardDraw();
+    onCardDraw?.();
+    
+    // Відправка в Telegram про витягування карти
+    sendCardDrawNotification('single');
+    
+    // Reset if already drawn
+    if (isFlipped) {
+      setIsFlipped(false);
+      setSelectedCard(null);
+      setShowMultiple(false);
+      setMultipleCards([]);
+      setFlippedCards(new Set());
       
-      if (error.message.includes('Network')) {
-        setSubmitMessage('Проблеми з мережею. Перевірте з\'єднання та спробуйте ще раз.');
-      } else {
-        setSubmitMessage(error.message || 'Виникла помилка при відправці. Спробуйте пізніше.');
-      }
-    } finally {
-      setIsSubmitting(false);
+      setTimeout(() => {
+        const card = getRandomCard();
+        console.log('✅ Обрана карта:', card.name);
+        setSelectedCard(card);
+        setIsFlipped(true);
+      }, 300);
+    } else {
+      const card = getRandomCard();
+      console.log('✅ Обрана карта:', card.name);
+      setSelectedCard(card);
+      setIsFlipped(true);
     }
   };
 
-  const formatTelegramMessage = (data: any): string => {
-    const formTypeNames = {
-      quick: 'Швидка заявка',
-      detailed: 'Детальна заявка',
-      newsletter: 'Підписка на розсилку'
-    };
+  const handleDrawMultiple = (count: number) => {
+    console.log(`🔮 Витягування ${count} карт...`);
+    trackButtonClick(`draw_${count}_cards`, 'card_of_day');
+    onCardDraw?.();
+    
+    // Відправка в Telegram про витягування кількох карт
+    sendCardDrawNotification(`multiple_${count}`);
+    
+    // Reset state
+    setIsFlipped(false);
+    setSelectedCard(null);
+    setShowMultiple(false);
+    setFlippedCards(new Set());
+    
+    setTimeout(() => {
+      const cards = getMultipleCards(count);
+      console.log(`✅ Обрані карти (${count}):`, cards.map(c => c.name));
+      setMultipleCards(cards);
+      setShowMultiple(true);
+    }, 300);
+  };
 
-    let message = `📋 ${formTypeNames[data.formType as keyof typeof formTypeNames]}\n\n`;
-    
-    message += `👤 Ім'я: ${data.name}\n`;
-    
-    if (data.phone) {
-      message += `📱 Телефон: ${data.phone}\n`;
-    }
-    
-    if (data.email) {
-      message += `📧 Email: ${data.email}\n`;
-    }
-    
-    if (data.instagram) {
-      message += `📸 Instagram: ${data.instagram}\n`;
-    }
-    
-    if (data.birthdate) {
-      message += `🎂 Дата народження: ${data.birthdate}\n`;
-    }
-    
-    if (data.service) {
-      message += `💫 Послуга: ${data.service}\n`;
-    }
-    
-    if (data.question) {
-      message += `❓ Питання: ${data.question}\n`;
-    }
+  const handleCardFlip = (cardIndex: number) => {
+    console.log(`🔄 Перевертання карти ${cardIndex}`);
+    setFlippedCards(prev => new Set([...prev, cardIndex]));
+  };
 
-    // Analytics data
-    if (data.analytics) {
-      message += `\n📊 Аналітика:\n`;
-      message += `⏱️ Час заповнення: ${Math.round(data.analytics.completionTime / 1000)} сек\n`;
-      message += `🖱️ Взаємодії: ${data.analytics.totalInteractions}\n`;
-      message += `🔗 Джерело: ${data.analytics.source || 'direct'}\n`;
+  // ВИПРАВЛЕНО: дозволяємо перевертати одиночну карту
+  const handleSingleCardFlip = () => {
+    console.log('🔄 Перевертання одиночної карти');
+    setIsFlipped(prev => !prev);
+  };
+
+  const resetAll = () => {
+    console.log('🔄 Скидання всіх карт');
+    setIsFlipped(false);
+    setSelectedCard(null);
+    setShowMultiple(false);
+    setMultipleCards([]);
+    setFlippedCards(new Set());
+  };
+
+  const sendCardDrawNotification = async (type: string) => {
+    try {
+      const telegramData: TelegramMessage = {
+        name: 'Анонімний користувач',
+        phone: 'Не вказано',
+        formType: 'card_draw',
+        service: `Витягування карти: ${type}`,
+        analytics: {
+          timeOnSite: Math.floor((Date.now() - performance.now()) / 1000),
+          source: document.referrer || 'direct',
+          completionTime: 1000,
+          interactions: 1,
+          userAgent: navigator.userAgent
+        }
+      };
+
+      // Відправляємо без очікування результату (фонова задача)
+      TelegramService.sendMessage(telegramData).catch(error => {
+        console.log('Card draw notification failed (non-critical):', error);
+      });
+    } catch (error) {
+      // Ігноруємо помилки - це не критично
+      console.log('Card draw notification error (non-critical):', error);
     }
-
-    message += `\n⏰ Час: ${new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' })}`;
-
-    return message;
   };
 
   return (
-    <div className={className}>
-      {/* Form type selector */}
-      <div className="flex justify-center mb-6">
-        <div className="bg-darkblue/60 rounded-lg p-1 border border-purple/30">
-          {[
-            { key: 'quick', label: 'Швидко', icon: '⚡' },
-            { key: 'detailed', label: 'Детально', icon: '📋' },
-            { key: 'newsletter', label: 'Розсилка', icon: '📧' }
-          ].map(({ key, label, icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveFormType(key as any)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
-                activeFormType === key
-                  ? 'bg-gold text-darkblue shadow-md'
-                  : 'text-gray-300 hover:text-white hover:bg-purple/30'
-              }`}
+    <section className="py-12 md:py-20 bg-purple/10">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="section-title">Карти Таро</h2>
+          <p className="text-gray-300 max-w-xl mx-auto mb-8">
+            Відкрийте таємниці Великих Арканів. Витягніть карту дня або створіть повний розклад для глибшого розуміння.
+          </p>
+          
+          {/* Control Buttons - ВИПРАВЛЕНО: додані діагностичні логи */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <button 
+              onClick={handleDrawSingle}
+              className="btn-primary group"
+              onMouseDown={() => trackButtonClick('draw_single_card', 'card_of_day')}
+              style={{ pointerEvents: 'auto' }}
             >
-              {icon} {label}
+              <span className="relative z-10 flex items-center">
+                {isFlipped ? 'Нова карта' : 'Карта дня'}
+                <span className="ml-2">🔮</span>
+              </span>
             </button>
-          ))}
+            
+            <button 
+              onClick={() => handleDrawMultiple(3)}
+              className="bg-purple hover:bg-purple/80 text-white px-6 py-3 rounded-md font-medium transition-all duration-300 hover:shadow-[0_0_15px_rgba(74,26,116,0.6)] transform hover:-translate-y-1"
+              style={{ pointerEvents: 'auto' }}
+            >
+              3 карти ✨
+            </button>
+            
+            <button 
+              onClick={() => handleDrawMultiple(5)}
+              className="bg-gold/20 hover:bg-gold/30 text-gold border border-gold/50 px-6 py-3 rounded-md font-medium transition-all duration-300 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transform hover:-translate-y-1"
+              style={{ pointerEvents: 'auto' }}
+            >
+              5 карт 🌟
+            </button>
+            
+            {(isFlipped || showMultiple) && (
+              <button 
+                onClick={resetAll}
+                className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-3 rounded-md font-medium transition-all duration-300"
+                style={{ pointerEvents: 'auto' }}
+              >
+                Скинути 🔄
+              </button>
+            )}
+          </div>
         </div>
+        
+        {/* Single Card Display - ВИПРАВЛЕНО: дозволяємо перевертати карту */}
+        {!showMultiple && (
+          <div className="flex flex-col items-center justify-center gap-8">
+            <AdvancedTarotCard
+              card={selectedCard}
+              isFlipped={isFlipped}
+              onFlip={handleSingleCardFlip} // ВИПРАВЛЕНО: працююча функція замість порожньої
+              size="large"
+              showDetails={true}
+            />
+          </div>
+        )}
+
+        {/* Multiple Cards Display */}
+        {showMultiple && multipleCards.length > 0 && (
+          <div className="mb-12">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold gold-gradient mb-4">
+                {multipleCards.length === 3 ? 'Розклад "Минуле-Сьогодення-Майбутнє"' : 'П\'ятикартковий розклад'}
+              </h3>
+              <div className="flex justify-center gap-2 text-sm text-gray-400 mb-4">
+                {multipleCards.length === 3 ? (
+                  <>
+                    <span>Минуле</span>
+                    <span>•</span>
+                    <span>Сьогодення</span>
+                    <span>•</span>
+                    <span>Майбутнє</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Ситуація</span>
+                    <span>•</span>
+                    <span>Виклик</span>
+                    <span>•</span>
+                    <span>Минуле</span>
+                    <span>•</span>
+                    <span>Майбутнє</span>
+                    <span>•</span>
+                    <span>Результат</span>
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div className={`grid gap-6 justify-center ${
+              multipleCards.length === 3 
+                ? 'grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto' 
+                : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-5 max-w-6xl mx-auto'
+            }`}>
+              {multipleCards.map((card, index) => (
+                <div key={`${card.id}-${index}`} className="flex flex-col items-center">
+                  <div className="mb-3">
+                    <span className="text-sm text-gold font-semibold">
+                      {multipleCards.length === 3 
+                        ? ['Минуле', 'Сьогодення', 'Майбутнє'][index]
+                        : ['Ситуація', 'Виклик', 'Минуле', 'Майбутнє', 'Результат'][index]
+                      }
+                    </span>
+                  </div>
+                  
+                  <AdvancedTarotCard
+                    card={card}
+                    isFlipped={flippedCards.has(index)}
+                    onFlip={() => handleCardFlip(index)}
+                    size="medium"
+                    showDetails={false}
+                  />
+                  
+                  {flippedCards.has(index) && (
+                    <div className="mt-4 max-w-xs text-center">
+                      <p className="text-sm text-gray-300 mb-2">{card.shortMeaning}</p>
+                      <p className="text-xs text-gray-400 italic">"{card.dailyAdvice}"</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Call to Action */}
+        {(isFlipped || showMultiple) && (
+          <div className="text-center mt-12 border-t border-purple/30 pt-8">
+            <h3 className="text-2xl font-semibold mb-4 gold-gradient">
+              Хочете глибший аналіз?
+            </h3>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              Ці карти дають загальне уявлення про енергії навколо вас. Для детального розбору вашої ситуації, 
+              персональних порад та відповідей на конкретні питання замовте індивідуальну консультацію.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={onFullReadingClick}
+                className="btn-primary"
+                onMouseDown={() => trackButtonClick('get_full_reading', 'card_of_day')}
+                style={{ pointerEvents: 'auto' }}
+              >
+                Замовити повну консультацію
+              </button>
+              
+              <a 
+                href="https://t.me/miaxialip_tarot_bot" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-md font-medium transition-all duration-300 hover:shadow-[0_0_15px_rgba(37,99,235,0.6)] transform hover:-translate-y-1 flex items-center justify-center"
+                onMouseDown={() => trackButtonClick('telegram_bot', 'card_of_day')}
+                style={{ pointerEvents: 'auto' }}
+              >
+                Telegram бот зі знижками 🤖
+              </a>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Status message */}
-      {submitMessage && (
-        <div className={`mb-6 p-4 rounded-md border animate-pulse ${
-          submitStatus === 'success' 
-            ? 'bg-green-900/20 border-green-500/30 text-green-400' 
-            : 'bg-red-900/20 border-red-500/30 text-red-400'
-        }`}>
-          <div className="flex items-center">
-            {submitStatus === 'success' ? '✅' : '❌'} {submitMessage}
-          </div>
-        </div>
-      )}
-
-      {/* Loading indicator */}
-      {isSubmitting && (
-        <div className="mb-6 p-4 rounded-md border border-gold/30 bg-gold/10 text-gold">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin mr-2">⌛</div>
-            Відправляємо...
-          </div>
-        </div>
-      )}
-    </div>
+    </section>
   );
 };
 
-export default FormManager;
+export default CardOfDay;
