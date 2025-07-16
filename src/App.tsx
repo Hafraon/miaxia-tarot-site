@@ -23,20 +23,33 @@ function App() {
   
   // Lead tracking and smart popups
   const leadTracker = useLeadTracker();
-  const { popupState, showExitPopup, setShowExitPopup, closePopup, handlePopupSubmit } = useSmartPopups({
+  
+  // Створюємо об'єкт leadScore для smart popups
+  const currentLeadScore = {
     totalScore: leadTracker.getCurrentScore(),
     timeOnSite: leadTracker.getCurrentDuration(),
     scrollDepth: leadTracker.getCurrentScrollPercent(),
     interactions: leadTracker.getCurrentInteractions(),
-    level: leadTracker.getCurrentScore() >= 80 ? 'vip' : 
-           leadTracker.getCurrentScore() >= 60 ? 'hot' :
-           leadTracker.getCurrentScore() >= 40 ? 'warm' : 'cold'
-  });
+    level: leadTracker.getCurrentScore() >= 80 ? 'vip' as const : 
+           leadTracker.getCurrentScore() >= 60 ? 'hot' as const :
+           leadTracker.getCurrentScore() >= 40 ? 'warm' as const : 'cold' as const
+  };
+
+  const { 
+    popupState, 
+    showExitPopup, 
+    setShowExitPopup, 
+    closePopup, 
+    handlePopupSubmit 
+  } = useSmartPopups(currentLeadScore);
+
+  console.log('🚀 App рендериться, popupState:', popupState);
 
   // Ініціалізація Google Ads
   React.useEffect(() => {
     initGoogleAds();
     trackPageLoad();
+    console.log('📊 Google Ads ініціалізовано');
   }, []);
 
   // Відстеження скролу сторінки
@@ -56,6 +69,7 @@ function App() {
           if (scrollPercent >= percentage && !trackedPercentages.has(percentage)) {
             trackScroll(percentage);
             trackedPercentages.add(percentage);
+            console.log(`📊 Відстежено скрол: ${percentage}%`);
           }
         });
       }, 100);
@@ -72,9 +86,13 @@ function App() {
     <>
       {React.useEffect(() => {
         trackPageView('Home Page', window.location.href);
+        console.log('📊 Відстежено перегляд головної сторінки');
       }, [])}
       
-      <Header onOrderClick={() => setShowModal(true)} />
+      <Header onOrderClick={() => {
+        console.log('🔄 Відкриття модального вікна замовлення');
+        setShowModal(true);
+      }} />
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 md:pt-40 md:pb-24">
@@ -93,8 +111,12 @@ function App() {
             </p>
             
             <button 
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                console.log('🔄 Відкриття модального вікна з hero секції');
+                setShowModal(true);
+              }}
               className="btn-primary text-lg relative group overflow-hidden"
+              style={{ pointerEvents: 'auto' }}
             >
               <span className="relative z-10">Отримати консультацію зараз</span>
               <span className="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
@@ -105,13 +127,22 @@ function App() {
       
       <main className="pt-4">
         <CardOfDay 
-          onFullReadingClick={() => setShowModal(true)} 
-          onCardDraw={() => leadTracker.trackCardDraw('daily_card')}
+          onFullReadingClick={() => {
+            console.log('🔄 Відкриття модального вікна з CardOfDay');
+            setShowModal(true);
+          }} 
+          onCardDraw={() => {
+            console.log('🔮 Витягування карти відстежено');
+            leadTracker.trackCardDraw('daily_card');
+          }}
         />
         <Services />
         <AboutMe />
         <Testimonials />
-        <SpecialOffer onOfferClick={() => setShowModal(true)} />
+        <SpecialOffer onOfferClick={() => {
+          console.log('🔄 Відкриття модального вікна з спеціальної пропозиції');
+          setShowModal(true);
+        }} />
         <OrderForm />
       </main>
       
@@ -119,30 +150,34 @@ function App() {
       
       <Modal 
         isOpen={showModal} 
-        onClose={() => setShowModal(false)}
-        onFormStart={() => leadTracker.trackFormOpen('modal')}
+        onClose={() => {
+          console.log('🔄 Закриття модального вікна');
+          setShowModal(false);
+        }}
+        onFormStart={() => {
+          console.log('📝 Початок заповнення форми в модальному вікні');
+          leadTracker.trackFormOpen('modal');
+        }}
       />
       
       {/* Exit Intent Popup */}
       <ExitPopup
         isOpen={showExitPopup}
-        onClose={() => setShowExitPopup(false)}
+        onClose={() => {
+          console.log('🔄 Закриття Exit Intent попапу');
+          setShowExitPopup(false);
+        }}
       />
       
-      {/* Smart Popup System */}
+      {/* Smart Popup System - ВИПРАВЛЕНО: правильний пропс isVisible */}
       <SmartPopup
-        isOpen={popupState.isOpen}
-        onClose={closePopup}
-        type={popupState.type!}
-        leadScore={{
-          totalScore: leadTracker.getCurrentScore(),
-          timeOnSite: leadTracker.getCurrentDuration(),
-          scrollDepth: leadTracker.getCurrentScrollPercent(),
-          interactions: leadTracker.getCurrentInteractions(),
-          level: leadTracker.getCurrentScore() >= 80 ? 'vip' : 
-                 leadTracker.getCurrentScore() >= 60 ? 'hot' :
-                 leadTracker.getCurrentScore() >= 40 ? 'warm' : 'cold'
+        isVisible={popupState.isOpen} // ВИПРАВЛЕНО: було isOpen, тепер isVisible
+        onClose={() => {
+          console.log('🔄 Закриття SmartPopup');
+          closePopup();
         }}
+        type={popupState.type!}
+        leadScore={currentLeadScore}
         onSubmit={handlePopupSubmit}
       />
       
@@ -150,6 +185,8 @@ function App() {
       <LeadAnalyticsBadge />
     </>
   );
+
+  console.log('🎯 App повертає JSX, показуємо SmartPopup:', popupState.isOpen);
 
   return (
     <Router>
