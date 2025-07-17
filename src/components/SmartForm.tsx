@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { User, Phone, Mail, Instagram, Calendar, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 import useLeadTracker from '../hooks/useLeadTracker';
 
@@ -35,8 +35,8 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
 
   console.log('🎯 SmartForm рендериться:', { formType, disabled });
 
-  // Field configurations for different form types
-  const getFormFields = useCallback((): FormField[] => {
+  // ✅ ВИПРАВЛЕНО: useMemo для fields замість useCallback
+  const fields = useMemo((): FormField[] => {
     const baseFields: Record<string, FormField> = {
       name: {
         name: 'name',
@@ -133,9 +133,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
       default:
         return [baseFields.name, baseFields.phone];
     }
-  }, [formType]); // ✅ ВИПРАВЛЕНО: тепер залежить тільки від formType
-
-  const fields = getFormFields();
+  }, [formType]); // ✅ ВИПРАВЛЕНО: useMemo замість useCallback
 
   // Load saved data from localStorage
   useEffect(() => {
@@ -154,7 +152,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         console.error('❌ Помилка завантаження збережених даних форми:', error);
       }
     }
-  }, [formType, leadTracker]);
+  }, [formType]); // ✅ ВИПРАВЛЕНО: видалено leadTracker з залежностей
 
   // Save data to localStorage
   useEffect(() => {
@@ -164,7 +162,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     }
   }, [formData, formType]);
 
-  // Calculate progress - ✅ ВИПРАВЛЕНО: виправлена залежність
+  // Calculate progress - ✅ ВИПРАВЛЕНО: стабільні залежності
   useEffect(() => {
     const requiredFields = fields.filter(field => field.required);
     const filledRequired = requiredFields.filter(field => 
@@ -174,7 +172,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     setProgress(newProgress);
     
     console.log(`📊 Прогрес форми: ${Math.round(newProgress)}% (${filledRequired}/${requiredFields.length})`);
-  }, [formData, errors, formType]); // ✅ ВИПРАВЛЕНО: formType замість fields
+  }, [formData, errors, fields]); // ✅ ТЕПЕР fields стабільний через useMemo
 
   // Real-time validation
   const validateField = useCallback((field: FormField, value: string): string | null => {
@@ -212,7 +210,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         [fieldName]: error || ''
       }));
     }
-  }, [fields, touched, validateField, leadTracker]);
+  }, [fields, touched, validateField]); // ✅ ВИПРАВЛЕНО: видалено leadTracker
 
   const handleBlur = useCallback((fieldName: string) => {
     console.log(`👁️ Blur на полі: ${fieldName}`);
