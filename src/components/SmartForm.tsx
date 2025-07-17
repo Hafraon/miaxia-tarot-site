@@ -36,7 +36,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
   console.log('🎯 SmartForm рендериться:', { formType, disabled });
 
   // Field configurations for different form types
-  const getFormFields = (): FormField[] => {
+  const getFormFields = useCallback((): FormField[] => {
     const baseFields: Record<string, FormField> = {
       name: {
         name: 'name',
@@ -133,7 +133,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
       default:
         return [baseFields.name, baseFields.phone];
     }
-  };
+  }, [formType]); // ✅ ВИПРАВЛЕНО: тепер залежить тільки від formType
 
   const fields = getFormFields();
 
@@ -164,7 +164,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     }
   }, [formData, formType]);
 
-  // Calculate progress
+  // Calculate progress - ✅ ВИПРАВЛЕНО: виправлена залежність
   useEffect(() => {
     const requiredFields = fields.filter(field => field.required);
     const filledRequired = requiredFields.filter(field => 
@@ -174,7 +174,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     setProgress(newProgress);
     
     console.log(`📊 Прогрес форми: ${Math.round(newProgress)}% (${filledRequired}/${requiredFields.length})`);
-  }, [formData, errors, fields]);
+  }, [formData, errors, formType]); // ✅ ВИПРАВЛЕНО: formType замість fields
 
   // Real-time validation
   const validateField = useCallback((field: FormField, value: string): string | null => {
@@ -186,7 +186,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     return null;
   }, []);
 
-  const handleChange = (fieldName: string, value: string) => {
+  const handleChange = useCallback((fieldName: string, value: string) => {
     console.log(`📝 Зміна поля ${fieldName}:`, value);
     
     setFormData(prev => ({ ...prev, [fieldName]: value }));
@@ -212,9 +212,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         [fieldName]: error || ''
       }));
     }
-  };
+  }, [fields, touched, validateField, leadTracker]);
 
-  const handleBlur = (fieldName: string) => {
+  const handleBlur = useCallback((fieldName: string) => {
     console.log(`👁️ Blur на полі: ${fieldName}`);
     
     setTouched(prev => ({ ...prev, [fieldName]: true }));
@@ -227,9 +227,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         [fieldName]: error || ''
       }));
     }
-  };
+  }, [fields, formData, validateField]);
 
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     console.log('🔍 Валідація всієї форми...');
     
     const newErrors: Record<string, string> = {};
@@ -247,9 +247,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     
     console.log('🔍 Результат валідації:', { isValid, errors: newErrors });
     return isValid;
-  };
+  }, [fields, formData, validateField]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('📤 Відправка SmartForm...');
     
@@ -281,7 +281,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     } catch (error) {
       console.error('❌ Помилка відправки SmartForm:', error);
     }
-  };
+  }, [validateForm, disabled, formData, formType, analytics, onSubmit]);
 
   const getFormTitle = () => {
     switch (formType) {
@@ -383,7 +383,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
           </div>
         ))}
 
-        {/* Submit button - ВИПРАВЛЕНО: покращена логіка */}
+        {/* Submit button */}
         <button
           type="submit"
           disabled={disabled || progress < 100}
