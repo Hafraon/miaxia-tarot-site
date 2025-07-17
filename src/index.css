@@ -218,3 +218,29 @@
     caret-color: white !important;
   }
 }
+<script>
+// JAVASCRIPT ВИПРАВЛЕННЯ ДЛЯ АКТИВАЦІЇ ПОЛІВ
+window.addEventListener('DOMContentLoaded', function() {
+  console.log('🔧 Застосовуємо JavaScript виправлення полів...');
+  
+  setInterval(() => {
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+      if (input.style.pointerEvents === 'none') {
+        input.style.pointerEvents = 'auto';
+        input.style.userSelect = 'text';
+        input.style.cursor = 'text';
+        console.log('🔧 Виправлено поле:', input);
+      }
+    });
+    
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+      if (button.style.pointerEvents === 'none') {
+        button.style.pointerEvents = 'auto';
+        button.style.cursor = 'pointer';
+      }
+    });
+  }, 1000);
+});
+</script>
