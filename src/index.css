@@ -79,7 +79,7 @@
   }
 }
 
-/* ✅ ВИПРАВЛЕННЯ НЕАКТИВНИХ ПОЛІВ ФОРМ */
+/* ✅ ВИПРАВЛЕННЯ НЕАКТИВНИХ ПОЛІВ ФОРМ - МАКСИМАЛЬНА СИЛА */
 @layer utilities {
   /* Базове виправлення для всіх полів */
   input, textarea, select, button {
@@ -90,126 +90,83 @@
     -ms-user-select: auto !important;
   }
 
-  /* Виправлення курсора для полів вводу */
-  input:not([type="button"]):not([type="submit"]):not([type="reset"]), 
-  textarea, 
-  select {
-    cursor: text !important;
-  }
-
-  /* Виправлення курсора для кнопок */
-  button, 
-  input[type="button"], 
-  input[type="submit"], 
-  input[type="reset"] {
-    cursor: pointer !important;
-  }
-
-  /* ВИПРАВЛЕННЯ ДЛЯ МОДАЛЬНИХ ВІКОН */
-  .modal input,
-  .modal textarea,
-  .modal select,
-  .modal button,
-  [class*="modal"] input,
-  [class*="modal"] textarea,
-  [class*="modal"] select,
-  [class*="modal"] button {
+  /* СИЛОВЕ ВИПРАВЛЕННЯ - все що може блокувати */
+  input:not([disabled]):not([readonly]), 
+  textarea:not([disabled]):not([readonly]), 
+  select:not([disabled]):not([readonly]) {
     pointer-events: auto !important;
+    cursor: text !important;
     user-select: text !important;
     -webkit-user-select: text !important;
-    cursor: text !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
+    position: relative !important;
   }
 
-  /* Виправлення курсора для кнопок в модалах */
-  .modal button,
-  [class*="modal"] button {
+  /* Кнопки */
+  button:not([disabled]) {
+    pointer-events: auto !important;
     cursor: pointer !important;
+    z-index: 9999 !important;
+    position: relative !important;
   }
 
-  /* ВИПРАВЛЕННЯ ДЛЯ ПОПАПІВ */
-  [class*="popup"] input,
-  [class*="popup"] textarea,
-  [class*="popup"] select,
-  [class*="popup"] button {
-    pointer-events: auto !important;
-    user-select: text !important;
-    -webkit-user-select: text !important;
-    cursor: text !important;
-  }
-
-  /* Виправлення курсора для кнопок в попапах */
-  [class*="popup"] button {
-    cursor: pointer !important;
-  }
-
-  /* ВИПРАВЛЕННЯ ДЛЯ СМАРТФОРМ */
-  [class*="SmartForm"] input,
-  [class*="SmartForm"] textarea,
-  [class*="SmartForm"] select,
-  [class*="SmartForm"] button,
-  [class*="smartform"] input,
-  [class*="smartform"] textarea,
-  [class*="smartform"] select,
-  [class*="smartform"] button {
-    pointer-events: auto !important;
-    user-select: text !important;
-    -webkit-user-select: text !important;
-    cursor: text !important;
-  }
-
-  /* ЗАБОРОНЯЄМО БЛОКУВАННЯ НА ФОРМАХ */
-  form {
+  /* МОДАЛИ - МАКСИМАЛЬНА СИЛА */
+  .modal *, 
+  [class*="modal"] *, 
+  [data-modal] *, 
+  .popup *, 
+  [class*="popup"] * {
     pointer-events: auto !important;
   }
 
+  /* ФОРМИ - МАКСИМАЛЬНА СИЛА */
+  form, 
   form * {
     pointer-events: auto !important;
   }
 
-  /* ГАРАНТУЄМО ЩО INPUT НЕ DISABLED */
-  input:not([disabled]), 
-  textarea:not([disabled]), 
-  select:not([disabled]) {
-    opacity: 1 !important;
-    cursor: text !important;
-    background-color: rgba(0,0,0,0.3) !important;
-    border: 1px solid rgba(255,255,255,0.3) !important;
-  }
-
-  /* ВИПРАВЛЕННЯ ДЛЯ КНОПОК */
-  button:not([disabled]) {
-    cursor: pointer !important;
+  /* СМАРТФОРМИ - МАКСИМАЛЬНА СИЛА */
+  [class*="SmartForm"] *, 
+  [class*="smartform"] *, 
+  [class*="form"] * {
     pointer-events: auto !important;
   }
 
-  /* ДОДАТКОВІ ВИПРАВЛЕННЯ ДЛЯ МОБІЛЬНИХ */
-  @media (max-width: 768px) {
-    input, textarea, select {
-      font-size: 16px !important; /* Запобігає зуму на iOS */
-      -webkit-appearance: none !important;
-      -webkit-border-radius: 0 !important;
-    }
+  /* СПЕЦІАЛЬНЕ ВИПРАВЛЕННЯ TAILWIND CLASSES */
+  .cursor-not-allowed {
+    cursor: text !important;
   }
 
-  /* ВИПРАВЛЕННЯ ДЛЯ ФОКУСУ */
+  .pointer-events-none {
+    pointer-events: auto !important;
+  }
+
+  .select-none {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+  }
+
+  /* ФОКУС */
   input:focus, 
   textarea:focus, 
   select:focus {
     outline: 2px solid #d4af37 !important;
     outline-offset: 2px !important;
     border-color: #d4af37 !important;
+    z-index: 10000 !important;
   }
 
-  /* ВИПРАВЛЕННЯ ДЛЯ PLACEHOLDER */
+  /* PLACEHOLDER */
   input::placeholder,
   textarea::placeholder {
     opacity: 0.7 !important;
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* ВИПРАВЛЕННЯ ДЛЯ АВТОФІЛА */
+  /* АВТОФІЛ */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus {
@@ -217,30 +174,13 @@
     -webkit-text-fill-color: white !important;
     caret-color: white !important;
   }
+
+  /* МОБІЛЬНІ ВИПРАВЛЕННЯ */
+  @media (max-width: 768px) {
+    input, textarea, select {
+      font-size: 16px !important;
+      -webkit-appearance: none !important;
+      -webkit-border-radius: 0 !important;
+    }
+  }
 }
-<script>
-// JAVASCRIPT ВИПРАВЛЕННЯ ДЛЯ АКТИВАЦІЇ ПОЛІВ
-window.addEventListener('DOMContentLoaded', function() {
-  console.log('🔧 Застосовуємо JavaScript виправлення полів...');
-  
-  setInterval(() => {
-    const inputs = document.querySelectorAll('input, textarea, select');
-    inputs.forEach(input => {
-      if (input.style.pointerEvents === 'none') {
-        input.style.pointerEvents = 'auto';
-        input.style.userSelect = 'text';
-        input.style.cursor = 'text';
-        console.log('🔧 Виправлено поле:', input);
-      }
-    });
-    
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(button => {
-      if (button.style.pointerEvents === 'none') {
-        button.style.pointerEvents = 'auto';
-        button.style.cursor = 'pointer';
-      }
-    });
-  }, 1000);
-});
-</script>
