@@ -2,8 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SmartForm from './SmartForm';
 import { TelegramService, TelegramMessage } from '../utils/telegramService';
-import { trackFormStart, trackFormSubmit, trackOrderFormConversion, trackQuickOrderConversion } from '../utils/analytics';
-import useLeadTracker from '../hooks/useLeadTracker';
 
 interface FormManagerProps {
   defaultType?: 'quick' | 'detailed' | 'newsletter';
@@ -17,25 +15,23 @@ const FormManager: React.FC<FormManagerProps> = ({
   className = '' 
 }) => {
   const navigate = useNavigate();
-  const leadTracker = useLeadTracker();
   const [activeFormType, setActiveFormType] = useState<'quick' | 'detailed' | 'newsletter'>(defaultType);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ✅ ВИПРАВЛЕНО: Обернено в useCallback для запобігання перерендерингу
+  console.log('🎯 FormManager БЕЗ ТРЕКІНГУ:', { activeFormType, isSubmitting });
+
+  // ✅ useCallback для handleFormSubmit БЕЗ трекінгу
   const handleFormSubmit = useCallback(async (data: any) => {
     try {
-      console.log('📤 FormManager: Відправка форми...', data);
+      console.log('📤 FormManager: Відправка форми БЕЗ ТРЕКІНГУ...', data);
       setIsSubmitting(true);
       setSubmitStatus('idle');
       setSubmitMessage('');
 
-      // Track form submission in lead tracker
-      leadTracker.trackFormSubmit(data.formType);
-
-      // Track form submission
-      trackFormSubmit(`${data.formType}_form`, data.service || 'consultation');
+      // ❌ ВИДАЛЕНО: leadTracker.trackFormSubmit(data.formType);
+      // ❌ ВИДАЛЕНО: trackFormSubmit, trackQuickOrderConversion, trackOrderFormConversion
 
       // Підготовка даних для Telegram
       const telegramData: TelegramMessage = {
@@ -58,12 +54,7 @@ const FormManager: React.FC<FormManagerProps> = ({
       if (result.success) {
         console.log('✅ Форма успішно відправлена!', result);
 
-        // Track conversion based on form type
-        if (data.formType === 'quick') {
-          trackQuickOrderConversion('Швидка консультація', 300);
-        } else if (data.formType === 'detailed') {
-          trackOrderFormConversion('Детальна консультація', 500);
-        }
+        // ❌ ВИДАЛЕНО: trackQuickOrderConversion, trackOrderFormConversion
 
         setSubmitStatus('success');
         setSubmitMessage(result.message || 'Заявка успішно відправлена! Перенаправляємо...');
@@ -91,57 +82,9 @@ const FormManager: React.FC<FormManagerProps> = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [leadTracker, onSuccess, navigate]); // ✅ ДОДАНО: залежності для useCallback
+  }, [onSuccess, navigate]); // ✅ Чисті залежності
 
-  const formatTelegramMessage = (data: any): string => {
-    const formTypeNames = {
-      quick: 'Швидка заявка',
-      detailed: 'Детальна заявка',
-      newsletter: 'Підписка на розсилку'
-    };
-
-    let message = `📋 ${formTypeNames[data.formType as keyof typeof formTypeNames]}\n\n`;
-    
-    message += `👤 Ім'я: ${data.name}\n`;
-    
-    if (data.phone) {
-      message += `📱 Телефон: ${data.phone}\n`;
-    }
-    
-    if (data.email) {
-      message += `📧 Email: ${data.email}\n`;
-    }
-    
-    if (data.instagram) {
-      message += `📸 Instagram: ${data.instagram}\n`;
-    }
-    
-    if (data.birthdate) {
-      message += `🎂 Дата народження: ${data.birthdate}\n`;
-    }
-    
-    if (data.service) {
-      message += `💫 Послуга: ${data.service}\n`;
-    }
-    
-    if (data.question) {
-      message += `❓ Питання: ${data.question}\n`;
-    }
-
-    // Analytics data
-    if (data.analytics) {
-      message += `\n📊 Аналітика:\n`;
-      message += `⏱️ Час заповнення: ${Math.round(data.analytics.completionTime / 1000)} сек\n`;
-      message += `🖱️ Взаємодії: ${data.analytics.totalInteractions}\n`;
-      message += `🔗 Джерело: ${data.analytics.source || 'direct'}\n`;
-    }
-
-    message += `\n⏰ Час: ${new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' })}`;
-
-    return message;
-  };
-
-  // ✅ ВИПРАВЛЕНО: Обернено в useCallback для запобігання перерендерингу
+  // ✅ useCallback для handleFormTypeChange
   const handleFormTypeChange = useCallback((newFormType: 'quick' | 'detailed' | 'newsletter') => {
     console.log(`🔄 Переключення форми на: ${newFormType}`);
     setActiveFormType(newFormType);
@@ -165,7 +108,6 @@ const FormManager: React.FC<FormManagerProps> = ({
                   ? 'bg-gold text-darkblue shadow-md'
                   : 'text-gray-300 hover:text-white hover:bg-purple/30'
               }`}
-              style={{ pointerEvents: 'auto' }}
             >
               {icon} {label}
             </button>
