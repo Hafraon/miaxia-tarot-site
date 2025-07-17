@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SmartForm from './SmartForm';
 import { TelegramService, TelegramMessage } from '../utils/telegramService';
@@ -23,7 +23,8 @@ const FormManager: React.FC<FormManagerProps> = ({
   const [submitMessage, setSubmitMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleFormSubmit = async (data: any) => {
+  // ✅ ВИПРАВЛЕНО: Обернено в useCallback для запобігання перерендерингу
+  const handleFormSubmit = useCallback(async (data: any) => {
     try {
       console.log('📤 FormManager: Відправка форми...', data);
       setIsSubmitting(true);
@@ -90,7 +91,7 @@ const FormManager: React.FC<FormManagerProps> = ({
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [leadTracker, onSuccess, navigate]); // ✅ ДОДАНО: залежності для useCallback
 
   const formatTelegramMessage = (data: any): string => {
     const formTypeNames = {
@@ -140,9 +141,15 @@ const FormManager: React.FC<FormManagerProps> = ({
     return message;
   };
 
+  // ✅ ВИПРАВЛЕНО: Обернено в useCallback для запобігання перерендерингу
+  const handleFormTypeChange = useCallback((newFormType: 'quick' | 'detailed' | 'newsletter') => {
+    console.log(`🔄 Переключення форми на: ${newFormType}`);
+    setActiveFormType(newFormType);
+  }, []);
+
   return (
     <div className={className}>
-      {/* Form type selector - ВИПРАВЛЕНО: додані діагностичні логи */}
+      {/* Form type selector */}
       <div className="flex justify-center mb-6">
         <div className="bg-darkblue/60 rounded-lg p-1 border border-purple/30">
           {[
@@ -152,10 +159,7 @@ const FormManager: React.FC<FormManagerProps> = ({
           ].map(({ key, label, icon }) => (
             <button
               key={key}
-              onClick={() => {
-                console.log(`🔄 Переключення форми на: ${key}`);
-                setActiveFormType(key as any);
-              }}
+              onClick={() => handleFormTypeChange(key as any)}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                 activeFormType === key
                   ? 'bg-gold text-darkblue shadow-md'
@@ -192,7 +196,7 @@ const FormManager: React.FC<FormManagerProps> = ({
         </div>
       )}
 
-      {/* ВИПРАВЛЕНО: Додали відсутній SmartForm компонент! */}
+      {/* SmartForm component */}
       <SmartForm 
         formType={activeFormType} 
         onSubmit={handleFormSubmit}
