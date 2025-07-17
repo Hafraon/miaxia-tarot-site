@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-export const GOOGLE_ADS_ID = 'AW-XXXXXXXXXX'; // Замініть на ваш реальний Google Ads ID
+export const GOOGLE_ADS_ID = 'AW-11069742071'; // Замініть на ваш реальний Google Ads ID
 
 // Conversion Labels для різних типів замовлень
 export const CONVERSION_LABELS = {
