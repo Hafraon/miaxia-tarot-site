@@ -10,7 +10,7 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-    name: '',
+  // ✅ ВИДАЛЕНО: помилкову строку "name: '',"
 
   // Відстеження відкриття модального вікна
   useEffect(() => {
@@ -61,11 +61,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
       <div 
         ref={modalRef}
         className="relative bg-darkblue border border-gold/30 rounded-lg shadow-xl max-w-lg w-full p-6 md:p-8 max-h-[90vh] overflow-y-auto"
+        style={{ 
+          pointerEvents: 'auto'  // ✅ ДОДАНО: гарантуємо що модал активний
+        }}
       >
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-300"
           aria-label="Закрити"
+          style={{ pointerEvents: 'auto' }}  // ✅ ДОДАНО: активна кнопка закриття
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -78,10 +82,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
           Заповніть швидку форму, і я зв'яжуся з вами найближчим часом для узгодження деталей консультації.
         </p>
         
-        <FormManager 
-          defaultType="quick" 
-          onSuccess={handleSuccess}
-        />
+        <div style={{ pointerEvents: 'auto' }}>  {/* ✅ ДОДАНО: гарантуємо активність форми */}
+          <FormManager 
+            defaultType="quick" 
+            onSuccess={handleSuccess}
+          />
+        </div>
       </div>
     </div>
   );
