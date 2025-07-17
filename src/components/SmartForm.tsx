@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { User, Phone, Mail, Instagram, Calendar, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
-import useLeadTracker from '../hooks/useLeadTracker';
 
 interface FormField {
   name: string;
@@ -24,8 +23,6 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [progress, setProgress] = useState(0);
-  const leadTracker = useLeadTracker();
-  const [formStartTime] = useState(Date.now());
   const [analytics, setAnalytics] = useState({
     startTime: Date.now(),
     fieldInteractions: {} as Record<string, number>,
@@ -33,9 +30,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     userAgent: navigator.userAgent
   });
 
-  console.log('🎯 SmartForm рендериться:', { formType, disabled });
+  console.log('🎯 SmartForm рендериться БЕЗ ТРЕКІНГУ:', { formType, disabled });
 
-  // ✅ ВИПРАВЛЕНО: useMemo для fields замість useCallback
+  // ✅ useMemo для fields
   const fields = useMemo((): FormField[] => {
     const baseFields: Record<string, FormField> = {
       name: {
@@ -133,14 +130,13 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
       default:
         return [baseFields.name, baseFields.phone];
     }
-  }, [formType]); // ✅ ВИПРАВЛЕНО: useMemo замість useCallback
+  }, [formType]);
 
   // Load saved data from localStorage
   useEffect(() => {
     console.log(`📝 Ініціалізація форми типу: ${formType}`);
     
-    // Track form open
-    leadTracker.trackFormOpen(formType);
+    // ❌ ВИДАЛЕНО: leadTracker.trackFormOpen(formType);
     
     const savedData = localStorage.getItem(`miaxialip_form_${formType}`);
     if (savedData) {
@@ -152,7 +148,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         console.error('❌ Помилка завантаження збережених даних форми:', error);
       }
     }
-  }, [formType]); // ✅ ВИПРАВЛЕНО: видалено leadTracker з залежностей
+  }, [formType]);
 
   // Save data to localStorage
   useEffect(() => {
@@ -162,7 +158,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     }
   }, [formData, formType]);
 
-  // Calculate progress - ✅ ВИПРАВЛЕНО: стабільні залежності
+  // Calculate progress
   useEffect(() => {
     const requiredFields = fields.filter(field => field.required);
     const filledRequired = requiredFields.filter(field => 
@@ -172,7 +168,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     setProgress(newProgress);
     
     console.log(`📊 Прогрес форми: ${Math.round(newProgress)}% (${filledRequired}/${requiredFields.length})`);
-  }, [formData, errors, fields]); // ✅ ТЕПЕР fields стабільний через useMemo
+  }, [formData, errors, fields]);
 
   // Real-time validation
   const validateField = useCallback((field: FormField, value: string): string | null => {
@@ -189,10 +185,9 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
     
     setFormData(prev => ({ ...prev, [fieldName]: value }));
     
-    // Track field interaction in lead tracker
-    leadTracker.trackFormFill(fieldName);
+    // ❌ ВИДАЛЕНО: leadTracker.trackFormFill(fieldName);
     
-    // Track field interactions
+    // Track field interactions (тільки локально)
     setAnalytics(prev => ({
       ...prev,
       fieldInteractions: {
@@ -210,7 +205,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
         [fieldName]: error || ''
       }));
     }
-  }, [fields, touched, validateField]); // ✅ ВИПРАВЛЕНО: видалено leadTracker
+  }, [fields, touched, validateField]);
 
   const handleBlur = useCallback((fieldName: string) => {
     console.log(`👁️ Blur на полі: ${fieldName}`);
@@ -249,7 +244,7 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('📤 Відправка SmartForm...');
+    console.log('📤 Відправка SmartForm БЕЗ ТРЕКІНГУ...');
     
     if (!validateForm() || disabled) {
       console.warn('⚠️ Форма не пройшла валідацію або вимкнена');
@@ -334,11 +329,6 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
                   className={`w-full pl-12 pr-4 py-3 bg-darkblue/60 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all duration-300 resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors[field.name] ? 'border-accent' : 'border-purple/30'
                   }`}
-                  style={{ 
-                    pointerEvents: disabled ? 'none' : 'auto',
-                    userSelect: 'text',
-                    fontSize: '16px'
-                  }}
                 />
               ) : (
                 <input
@@ -351,11 +341,6 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
                   className={`w-full pl-12 pr-4 py-3 bg-darkblue/60 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
                     errors[field.name] ? 'border-accent' : 'border-purple/30'
                   }`}
-                  style={{ 
-                    pointerEvents: disabled ? 'none' : 'auto',
-                    userSelect: 'text',
-                    fontSize: '16px'
-                  }}
                 />
               )}
               
@@ -390,7 +375,6 @@ const SmartForm: React.FC<SmartFormProps> = ({ formType, onSubmit, disabled = fa
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'btn-primary hover:shadow-lg transform hover:-translate-y-1'
           }`}
-          style={{ pointerEvents: 'auto' }}
         >
           {disabled ? (
             <span className="flex items-center justify-center">
