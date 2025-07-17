@@ -132,8 +132,8 @@ function App() {
             setShowModal(true);
           }} 
           onCardDraw={() => {
-            console.log('🔮 Витягування карти відстежено');
-            leadTracker.trackCardDraw('daily_card');
+			console.log('🔮 Витягування карти відстежено');
+			leadTracker.trackServiceClick('daily_card');
           }}
         />
         <Services />
