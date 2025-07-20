@@ -172,6 +172,28 @@
     z-index: 10 !important;
   }
 
+  /* КНОПКИ НАВІГАЦІЇ ВІДГУКІВ - кращий вигляд */
+  #testimonials .absolute.top-1\/2 {
+    backdrop-filter: blur(8px) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #testimonials .absolute.top-1\/2:hover {
+    transform: translateY(-50%) scale(1.1) !important;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4) !important;
+  }
+
+  /* Адаптивність для мобільних */
+  @media (max-width: 768px) {
+    #testimonials .absolute.top-1\/2 {
+      transform: translateY(-50%) scale(0.9) !important;
+    }
+    
+    #testimonials .absolute.top-1\/2:hover {
+      transform: translateY(-50%) scale(1) !important;
+    }
+  }
+
   /* СМАРТФОРМИ - МАКСИМАЛЬНА СИЛА */
   [class*="SmartForm"] *, 
   [class*="smartform"] *, 
