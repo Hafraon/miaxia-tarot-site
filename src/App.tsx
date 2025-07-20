@@ -94,7 +94,9 @@ function App() {
             
             <button 
               onClick={() => setShowModal(true)}
-              className="btn-primary text-lg relative group overflow-hidden"
+              className={`btn-primary text-lg relative group overflow-hidden transition-opacity duration-300 ${
+                showModal ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
             >
               <span className="relative z-10">Отримати консультацію зараз</span>
               <span className="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
