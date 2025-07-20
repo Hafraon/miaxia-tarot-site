@@ -278,6 +278,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📱 Telegram Bot: @miaxialip_tarot_bot`);
   console.log(`💬 Chat IDs: ${TELEGRAM_CHAT_IDS.join(', ')}`);
   console.log(`🛍️ Доступні послуги: ${Object.keys(SERVICES).length}`);
+  console.log(`📁 Static files: ${path.join(__dirname, 'dist')}`);
+  console.log(`🔗 API endpoints: /api/send-telegram, /api/health, /api/test-telegram`);
   
   if (isDevelopment) {
     console.log(`🌐 Тест бота: http://localhost:${PORT}/api/test-telegram`);

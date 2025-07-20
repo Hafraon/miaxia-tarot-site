@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.cjs",
-    "postbuild": "echo Build completed successfully"
+    "postbuild": "echo Build completed successfully",
+    "railway:build": "npm install && npm run build",
+    "railway:start": "node server.cjs"
   },
   "engines": {
     "node": ">=18"
