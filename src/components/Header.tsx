@@ -4,9 +4,10 @@ import { trackButtonClick } from '../utils/analytics';
 
 interface HeaderProps {
   onOrderClick: () => void;
+  showModal?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
+const Header: React.FC<HeaderProps> = ({ onOrderClick, showModal = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -18,6 +19,13 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Закриваємо мобільне меню коли відкривається модаль
+  useEffect(() => {
+    if (showModal) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [showModal]);
 
   return (
     <header 
@@ -50,7 +58,12 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
           <a href="#contact" className="nav-link">Контакти</a>
         </nav>
         
-        <button onClick={onOrderClick} className="hidden md:block btn-primary">
+        <button 
+          onClick={onOrderClick} 
+          className={`hidden md:block btn-primary transition-opacity duration-300 ${
+            showModal ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
           Замовити розклад
         </button>
       </div>
@@ -65,16 +78,15 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
           <a href="#about" className="nav-link block py-2" onClick={() => setIsMobileMenuOpen(false)}>Про мене</a>
           <a href="#testimonials" className="nav-link block py-2" onClick={() => setIsMobileMenuOpen(false)}>Відгуки</a>
           <a href="#contact" className="nav-link block py-2" onClick={() => setIsMobileMenuOpen(false)}>Контакти</a>
-          <button onClick={() => {onOrderClick(); setIsMobileMenuOpen(false);}} className="btn-primary w-full text-center">
-            Замовити розклад
-          </button>
           <button 
             onClick={() => {
               trackButtonClick('order_reading', 'mobile_menu');
               onOrderClick(); 
               setIsMobileMenuOpen(false);
             }} 
-            className="btn-primary w-full text-center"
+            className={`btn-primary w-full text-center transition-opacity duration-300 ${
+              showModal ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
           >
             Замовити розклад
           </button>

@@ -74,7 +74,7 @@ function App() {
         trackPageView('Home Page', window.location.href);
       }, [])}
       
-      <Header onOrderClick={() => setShowModal(true)} />
+      <Header onOrderClick={() => setShowModal(true)} showModal={showModal} />
       
       {/* Hero Section */}
       <section className="pt-28 pb-16 md:pt-36 md:pb-24">
