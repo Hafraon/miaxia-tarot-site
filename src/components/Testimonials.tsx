@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { testimonials } from '../data/testimonials';
 
 const Testimonials: React.FC = () => {
@@ -18,46 +18,17 @@ const Testimonials: React.FC = () => {
     );
   }
 
-  // ВИПРАВЛЕНО: Покращена логіка переключення з діагностикою
-  const goToPrev = () => {
-    console.log('goToPrev clicked, current index:', activeIndex);
-    setActiveIndex((prev) => {
-      const newIndex = prev === 0 ? testimonials.length - 1 : prev - 1;
-      console.log('New index:', newIndex);
-      return newIndex;
-    });
-  };
-
-  const goToNext = () => {
-    console.log('goToNext clicked, current index:', activeIndex);
-    setActiveIndex((prev) => {
-      const newIndex = prev === testimonials.length - 1 ? 0 : prev + 1;
-      console.log('New index:', newIndex);
-      return newIndex;
-    });
-  };
-
-  // ДОДАНО: Автоматичне переключення кожні 6 секунд
-  useEffect(() => {
-    const interval = setInterval(() => {
-      goToNext();
-    }, 6000);
-
-    return () => clearInterval(interval);
+  // ВИПРАВЛЕНО: Використовуємо useCallback для стабільних функцій
+  const goToPrev = useCallback(() => {
+    setActiveIndex((prev) => prev === 0 ? testimonials.length - 1 : prev - 1);
   }, []);
 
-  // ДОДАНО: Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowLeft') {
-        goToPrev();
-      } else if (event.key === 'ArrowRight') {
-        goToNext();
-      }
-    };
+  const goToNext = useCallback(() => {
+    setActiveIndex((prev) => prev === testimonials.length - 1 ? 0 : prev + 1);
+  }, []);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+  const goToSlide = useCallback((index: number) => {
+    setActiveIndex(index);
   }, []);
 
   return (
@@ -73,18 +44,9 @@ const Testimonials: React.FC = () => {
         <div className="relative max-w-4xl mx-auto" itemScope itemType="https://schema.org/ItemList">
           {/* ВИПРАВЛЕНО: Кнопки з гарантованою активністю */}
           <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              goToPrev();
-            }}
+            onClick={goToPrev}
             className="absolute top-1/2 -left-4 md:-left-12 transform -translate-y-1/2 bg-darkblue/70 hover:bg-darkblue/90 text-gold p-4 rounded-full transition-all duration-300 z-20 border-2 border-gold/40 hover:border-gold shadow-lg hover:shadow-xl"
             aria-label="Попередній відгук"
-            style={{ 
-              pointerEvents: 'auto',
-              cursor: 'pointer',
-              userSelect: 'none'
-            }}
             type="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,18 +55,9 @@ const Testimonials: React.FC = () => {
           </button>
           
           <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              goToNext();
-            }}
+            onClick={goToNext}
             className="absolute top-1/2 -right-4 md:-right-12 transform -translate-y-1/2 bg-darkblue/70 hover:bg-darkblue/90 text-gold p-4 rounded-full transition-all duration-300 z-20 border-2 border-gold/40 hover:border-gold shadow-lg hover:shadow-xl"
             aria-label="Наступний відгук"
-            style={{ 
-              pointerEvents: 'auto',
-              cursor: 'pointer',
-              userSelect: 'none'
-            }}
             type="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,10 +68,9 @@ const Testimonials: React.FC = () => {
           {/* ВИПРАВЛЕНО: Testimonials slider з правильними розмірами */}
           <div className="overflow-hidden py-8 px-2">
             <div 
-              className="flex transition-transform duration-700 ease-in-out"
+              className="flex transition-transform duration-500 ease-in-out"
               style={{ 
                 transform: `translateX(-${activeIndex * 100}%)`,
-                width: `${testimonials.length * 100}%`
               }}
             >
               {testimonials.map((testimonial, index) => (
@@ -127,12 +79,8 @@ const Testimonials: React.FC = () => {
                   className="w-full flex-shrink-0 px-4" 
                   itemScope 
                   itemType="https://schema.org/Review"
-                  style={{ 
-                    width: `${100 / testimonials.length}%`,
-                    minHeight: '350px'
-                  }}
                 >
-                  <div className="card text-center h-full flex flex-col justify-between">
+                  <div className="card text-center h-full flex flex-col justify-between min-h-[350px]">
                     <meta itemProp="itemReviewed" content="MiaxiaLip Tarot Services" />
                     <div itemProp="reviewRating" itemScope itemType="https://schema.org/Rating">
                       <meta itemProp="ratingValue" content="5" />
@@ -146,11 +94,10 @@ const Testimonials: React.FC = () => {
                       ))}
                     </div>
                     
-                    {/* Текст відгуку - ВИПРАВЛЕНО: кращий розмір і відступи */}
+                    {/* Текст відгуку */}
                     <blockquote 
-                      className="text-gray-200 text-base md:text-lg italic mb-8 flex-grow flex items-center leading-relaxed" 
+                      className="text-gray-200 text-base md:text-lg italic mb-8 flex-grow flex items-center leading-relaxed px-4" 
                       itemProp="reviewBody"
-                      style={{ minHeight: '120px' }}
                     >
                       <span>"{testimonial.text}"</span>
                     </blockquote>
@@ -181,51 +128,23 @@ const Testimonials: React.FC = () => {
             {testimonials.map((_, i) => (
               <button
                 key={i}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('Dot clicked, setting index to:', i);
-                  setActiveIndex(i);
-                }}
+                onClick={() => goToSlide(i)}
                 className={`w-4 h-4 rounded-full transition-all duration-300 border-2 ${
                   i === activeIndex 
                     ? 'bg-gold border-gold w-8 shadow-lg' 
                     : 'bg-transparent border-gray-500 hover:border-gold/60 hover:bg-gold/20'
                 }`}
                 aria-label={`Перейти до відгуку ${i + 1}`}
-                style={{ 
-                  pointerEvents: 'auto',
-                  cursor: 'pointer',
-                  userSelect: 'none'
-                }}
                 type="button"
               />
             ))}
           </div>
           
-          {/* ДОДАНО: Індикатор прогресу */}
+          {/* Індикатор прогресу */}
           <div className="text-center mt-6">
             <span className="text-gray-400 text-sm bg-darkblue/30 px-4 py-2 rounded-full">
               Відгук {activeIndex + 1} з {testimonials.length}
             </span>
-          </div>
-          
-          {/* ДОДАНО: Контролі для мобільних */}
-          <div className="flex justify-center mt-4 space-x-4 md:hidden">
-            <button
-              onClick={goToPrev}
-              className="bg-gold/20 text-gold px-4 py-2 rounded-lg transition-colors hover:bg-gold/30"
-              style={{ pointerEvents: 'auto' }}
-            >
-              ← Попередній
-            </button>
-            <button
-              onClick={goToNext}
-              className="bg-gold/20 text-gold px-4 py-2 rounded-lg transition-colors hover:bg-gold/30"
-              style={{ pointerEvents: 'auto' }}
-            >
-              Наступний →
-            </button>
           </div>
         </div>
       </div>

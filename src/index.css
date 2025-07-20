@@ -156,6 +156,22 @@
     z-index: 10000 !important;
   }
 
+  /* 🎯 ВИПРАВЛЕННЯ ВІДГУКІВ (TESTIMONIALS) */
+  #testimonials .flex[style*="translateX"] {
+    transition: transform 0.5s ease-in-out !important;
+  }
+
+  #testimonials .w-full.flex-shrink-0 {
+    min-width: 100% !important;
+    width: 100% !important;
+  }
+
+  #testimonials button[type="button"] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+  }
+
   /* СМАРТФОРМИ - МАКСИМАЛЬНА СИЛА */
   [class*="SmartForm"] *, 
   [class*="smartform"] *, 
