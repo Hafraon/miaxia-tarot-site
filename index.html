@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="uk">
   <head>
+      <!-- Google Tag Manager -->
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KKHG5752');</script>
+      <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/tarot.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -186,6 +193,10 @@
     </script>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KKHG5752"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
@@ -200,6 +211,13 @@
         botUrl: 'https://t.me/miaxialip_tarot_bot'
       };
 
+      // ВИПРАВЛЕНО: Динамічний API URL для локальної розробки та продакшну
+      const API_BASE_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000' 
+        : window.location.origin;
+
+      console.log('🌐 API Base URL:', API_BASE_URL);
+
       // Updated service prices for website (without bot discount)
       window.WEBSITE_SERVICES = {
         'individual': { name: '1 питання', price: 100, botPrice: 70, discount: 30, description: 'Отримайте відповідь на одне конкретне питання' },
@@ -213,38 +231,31 @@
         'year': { name: 'Аркан на рік', price: 600, botPrice: 560, discount: 7, description: 'Прогноз на цілий рік' }
       };
 
-      // Send message to Telegram function
-      window.sendToTelegram = async function(message, options = {}) {
+      // ВИПРАВЛЕНО: Відправка форми з динамічним URL
+      window.sendToTelegram = async function(formData) {
         try {
-          const config = window.TELEGRAM_CONFIG;
-          const url = `https://api.telegram.org/bot${config.botToken}/sendMessage`;
+          console.log('📝 Відправляю дані на сервер:', formData);
+          console.log('🌐 API URL:', `${API_BASE_URL}/api/send-telegram`);
           
-          const payload = {
-            chat_id: config.chatId,
-            text: message,
-            parse_mode: options.parseMode || 'HTML',
-            disable_web_page_preview: options.disablePreview || false
-          };
-
-          const response = await fetch(url, {
+          const response = await fetch(`${API_BASE_URL}/api/send-telegram`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(formData)
           });
 
           const result = await response.json();
           
-          if (response.ok) {
-            console.log('✅ Message sent to Telegram successfully:', result);
+          if (response.ok && result.success) {
+            console.log('✅ Повідомлення відправлено успішно:', result);
             window.showNotification('Повідомлення відправлено успішно!', 'success');
             return { success: true, data: result };
           } else {
-            throw new Error(result.description || 'Failed to send message');
+            throw new Error(result.error || 'Помилка відправки');
           }
         } catch (error) {
-          console.error('❌ Error sending to Telegram:', error);
+          console.error('❌ Помилка відправки:', error);
           window.showNotification('Помилка відправки повідомлення', 'error');
           return { success: false, error: error.message };
         }
@@ -598,25 +609,23 @@
         sessionStorage.setItem('botPromoShown', 'true');
       };
 
-      // Test Telegram function
+      // ВИПРАВЛЕНО: Тестова функція з динамічним URL
       window.testTelegram = async function() {
-        const testMessage = `
-🧪 <b>Тест повідомлення з сайту</b>
+        const testData = {
+          name: 'Тест з сайту',
+          phone: '+380123456789',
+          instagram: '@test_user',
+          service: 'individual',
+          question: 'Це тестове повідомлення з браузера'
+        };
 
-⏰ Час: ${new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' })}
-🌐 URL: ${window.location.href}
-👤 User Agent: ${navigator.userAgent.substring(0, 50)}...
-
-✅ Telegram інтеграція працює!
-        `.trim();
-
-        console.log('🧪 Testing Telegram integration...');
-        const result = await window.sendToTelegram(testMessage);
+        console.log('🧪 Тестую сервер на:', `${API_BASE_URL}/api/send-telegram`);
+        const result = await window.sendToTelegram(testData);
         
         if (result.success) {
-          console.log('✅ Telegram test successful!');
+          console.log('✅ Тест успішний!');
         } else {
-          console.error('❌ Telegram test failed:', result.error);
+          console.error('❌ Тест не пройшов:', result.error);
         }
         
         return result;
@@ -627,6 +636,7 @@
         console.log('🚀 Telegram integration initialized');
         console.log('📱 Bot:', window.TELEGRAM_CONFIG.botUsername);
         console.log('💰 Services with discounts:', Object.keys(window.WEBSITE_SERVICES).length);
+        console.log('🌐 Environment:', window.location.hostname === 'localhost' ? 'Development' : 'Production');
         
         // Show bot promotion after 10 seconds
         setTimeout(() => {
@@ -637,7 +647,7 @@
         
         // Test connection (only in development)
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          console.log('🔧 Development mode - testing Telegram connection...');
+          console.log('🔧 Development mode - testing Express connection...');
           // Uncomment next line to test in development
           // setTimeout(() => window.testTelegram(), 2000);
         }
@@ -653,9 +663,9 @@
 
       // Expose functions globally for debugging
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        console.log('🔧 Development mode - Telegram functions available:');
+        console.log('🔧 Development mode - функції доступні:');
         console.log('- window.testTelegram()');
-        console.log('- window.sendToTelegram(message)');
+        console.log('- window.sendToTelegram(formData)');
         console.log('- window.showNotification(message, type)');
         console.log('- window.showBotPromotion()');
       }

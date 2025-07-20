@@ -9,7 +9,7 @@ const SpecialOffer: React.FC<SpecialOfferProps> = ({ onOfferClick }) => {
   const { hours, minutes, seconds } = useCountdown();
 
   return (
-    <section className="py-12 md:py-20">
+    <section className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto relative">
           <div className="absolute inset-0 bg-gradient-to-r from-purple/50 to-darkblue/50 rounded-lg transform rotate-1"></div>

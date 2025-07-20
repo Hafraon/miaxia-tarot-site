@@ -2,7 +2,7 @@ import React from 'react';
 
 const AboutMe: React.FC = () => {
   return (
-    <section id="about" className="py-12 md:py-20">
+    <section id="about" className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center" itemScope itemType="https://schema.org/Person">
           <h2 className="section-title">Майстер таро з 5-річним досвідом</h2>

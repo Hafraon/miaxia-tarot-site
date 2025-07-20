@@ -1,16 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
-import FormManager from './FormManager';
-import { trackButtonClick } from '../utils/analytics';
+import { useNavigate } from 'react-router-dom';
+import { trackFormStart, trackFormSubmit, trackQuickOrderConversion, trackButtonClick } from '../utils/analytics';
+import { SERVICES } from '../data/services';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onFormStart?: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const modalRef = useRef<HTMLDivElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
+  const [formData, setFormData] = useState({
     name: '',
+    phone: '',
+    instagram: '',
+    service: ''
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Відстеження відкриття модального вікна
   useEffect(() => {
@@ -18,6 +28,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
       trackButtonClick('open_modal', 'consultation_request');
     }
   }, [isOpen]);
+
+  const handleFormStart = () => {
+    trackFormStart('modal_form');
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,11 +59,123 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
     };
   }, [isOpen, onClose]);
 
-  const handleSuccess = () => {
-    onFormStart?.();
-    setTimeout(() => {
-      onClose();
-    }, 2000);
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      newErrors.name = "Ім'я повинно містити мінімум 2 символи";
+    }
+    
+    if (!formData.phone.trim() || formData.phone.trim().length < 10) {
+      newErrors.phone = "Телефон повинен містити мінімум 10 цифр";
+    }
+    
+    // Phone format validation
+    const phoneRegex = /^(\+380|380|0)[0-9]{9}$/;
+    if (formData.phone && !phoneRegex.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
+      newErrors.phone = "Невірний формат телефону. Використовуйте: +380XXXXXXXXX";
+    }
+    
+    if (!formData.instagram.trim()) {
+      newErrors.instagram = "Instagram є обов'язковим";
+    }
+    
+    if (!formData.service) {
+      newErrors.service = "Оберіть послугу";
+    }
+    
+    return newErrors;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setSubmitStatus('error');
+      setSubmitMessage('Будь ласка, виправте помилки у формі');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setSubmitMessage('');
+
+    try {
+      // Відстеження відправки форми
+      trackFormSubmit('modal_form', formData.service || 'quick_consultation');
+      
+      const response = await fetch('http://localhost:3000/api/send-telegram', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Відстеження успішної конверсії
+        const serviceInfo = result.service || SERVICES[formData.service as keyof typeof SERVICES];
+        const servicePrice = serviceInfo ? serviceInfo.price : 300;
+        const serviceName = serviceInfo ? serviceInfo.name : 'Швидка консультація';
+        
+        trackQuickOrderConversion(serviceName, servicePrice);
+        
+        setSubmitStatus('success');
+        setSubmitMessage('Заявка успішно відправлена! Перенаправляємо...');
+        
+        // Close modal and redirect to thank you page after short delay
+        setTimeout(() => {
+          onClose();
+          navigate('/thank-you');
+        }, 2000);
+      } else {
+        throw new Error(result.error || 'Помилка відправки');
+      }
+    } catch (error: any) {
+      console.error('Error:', error);
+      setSubmitStatus('error');
+      
+      if (error.message.includes('валідації')) {
+        setSubmitMessage('Помилка валідації даних. Перевірте правильність заповнення полів.');
+      } else {
+        setSubmitMessage('Виникла помилка при відправці. Будь ласка, спробуйте пізніше.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    
+    // Відстеження початку заповнення при першому введенні
+    if (!formData.name && !formData.phone) {
+      handleFormStart();
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when field is changed
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+    
+    // Clear submit status when user starts typing again
+    if (submitStatus !== 'idle') {
+      setSubmitStatus('idle');
+      setSubmitMessage('');
+    }
   };
 
   if (!isOpen) return null;
@@ -60,7 +186,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
       
       <div 
         ref={modalRef}
-        className="relative bg-darkblue border border-gold/30 rounded-lg shadow-xl max-w-lg w-full p-6 md:p-8 max-h-[90vh] overflow-y-auto"
+        className="relative bg-darkblue border border-gold/30 rounded-lg shadow-xl max-w-md w-full p-6 md:p-8"
       >
         <button 
           onClick={onClose}
@@ -72,16 +198,93 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onFormStart }) => {
           </svg>
         </button>
 
-        <h3 className="text-2xl font-bold gold-gradient mb-4">Швидка заявка</h3>
+        <h3 className="text-2xl font-bold gold-gradient mb-4">Записатися на консультацію</h3>
         
         <p className="text-gray-300 mb-6">
-          Заповніть швидку форму, і я зв'яжуся з вами найближчим часом для узгодження деталей консультації.
+          Залиште свої контактні дані, і я зв'яжуся з вами найближчим часом для узгодження деталей.
         </p>
         
-        <FormManager 
-          defaultType="quick" 
-          onSuccess={handleSuccess}
-        />
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-gray-300 mb-2">Ім'я *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              onFocus={handleFormStart}
+              className={`w-full bg-darkblue/60 border ${errors.name ? 'border-accent' : 'border-purple/30'} rounded-md px-4 py-3 text-white focus:outline-none focus:border-gold/60`}
+              placeholder="Ваше ім'я"
+            />
+            {errors.name && <p className="text-accent text-sm mt-1">{errors.name}</p>}
+          </div>
+          
+          <div className="mb-4">
+            <label htmlFor="phone" className="block text-gray-300 mb-2">Телефон *</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className={`w-full bg-darkblue/60 border ${errors.phone ? 'border-accent' : 'border-purple/30'} rounded-md px-4 py-3 text-white focus:outline-none focus:border-gold/60`}
+              placeholder="+380XXXXXXXXX"
+            />
+            {errors.phone && <p className="text-accent text-sm mt-1">{errors.phone}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="instagram" className="block text-gray-300 mb-2">Нікнейм Instagram *</label>
+            <input
+              type="text"
+              id="instagram"
+              name="instagram"
+              value={formData.instagram}
+              onChange={handleChange}
+              className={`w-full bg-darkblue/60 border ${errors.instagram ? 'border-accent' : 'border-purple/30'} rounded-md px-4 py-3 text-white focus:outline-none focus:border-gold/60`}
+              placeholder="@username"
+            />
+            {errors.instagram && <p className="text-accent text-sm mt-1">{errors.instagram}</p>}
+          </div>
+          
+          <div className="mb-6">
+            <label htmlFor="service" className="block text-gray-300 mb-2">Послуга, яка вас цікавить *</label>
+            <select
+              id="service"
+              name="service"
+              value={formData.service}
+              onChange={handleChange}
+              className={`w-full bg-darkblue/60 border ${errors.service ? 'border-accent' : 'border-purple/30'} rounded-md px-4 py-3 text-white focus:outline-none focus:border-gold/60`}
+            >
+              <option value="">Оберіть послугу</option>
+              {Object.entries(SERVICES).map(([key, service]) => (
+                <option key={key} value={key}>
+                  {service.name} - {service.price} грн
+                </option>
+              ))}
+            </select>
+            {errors.service && <p className="text-accent text-sm mt-1">{errors.service}</p>}
+          </div>
+
+          {submitMessage && (
+            <div className={`mb-6 p-4 rounded-md border ${
+              submitStatus === 'success' 
+                ? 'bg-green-900/20 border-green-500/30 text-green-400' 
+                : 'bg-red-900/20 border-red-500/30 text-red-400'
+            }`}>
+              {submitMessage}
+            </div>
+          )}
+          
+          <button
+            type="submit"
+            className="btn-primary w-full text-center"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Надсилання...' : 'Замовити консультацію'}
+          </button>
+        </form>
       </div>
     </div>
   );
