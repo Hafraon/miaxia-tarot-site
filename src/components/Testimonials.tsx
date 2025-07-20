@@ -26,20 +26,20 @@ const Testimonials: React.FC = () => {
           {/* Slider controls */}
           <button 
             onClick={goToPrev}
-            className="absolute top-1/2 -left-4 md:-left-12 transform -translate-y-1/2 bg-darkblue/50 hover:bg-darkblue/80 text-gold p-3 rounded-full transition-colors duration-300 z-10"
+            className="absolute top-1/2 -left-4 md:-left-12 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
             aria-label="Попередній відгук"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           
           <button 
             onClick={goToNext}
-            className="absolute top-1/2 -right-4 md:-right-12 transform -translate-y-1/2 bg-darkblue/50 hover:bg-darkblue/80 text-gold p-3 rounded-full transition-colors duration-300 z-10"
+            className="absolute top-1/2 -right-4 md:-right-12 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
             aria-label="Наступний відгук"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -55,7 +55,7 @@ const Testimonials: React.FC = () => {
                   <div className="card text-center">
                     <div className="mb-6">
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-gold text-xl mx-0.5">★</span>
+                        <span key={i} className="text-gold text-2xl mx-1">★</span>
                       ))}
                     </div>
                     
@@ -83,15 +83,18 @@ const Testimonials: React.FC = () => {
           </div>
           
           {/* Dots indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
+          <div className="flex justify-center mt-8 space-x-3">
             {testimonials.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setActiveIndex(i)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  i === activeIndex ? 'bg-gold w-6' : 'bg-gray-500 hover:bg-gold/60'
+                className={`w-4 h-4 rounded-full transition-all duration-300 border-2 ${
+                  i === activeIndex 
+                    ? 'bg-gold border-gold w-8 shadow-lg' 
+                    : 'bg-transparent border-gray-500 hover:border-gold/60 hover:bg-gold/20'
                 }`}
                 aria-label={`Перейти до відгуку ${i + 1}`}
+                type="button"
               />
             ))}
           </div>
