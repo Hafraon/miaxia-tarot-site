@@ -23,14 +23,14 @@ const Testimonials: React.FC = () => {
         </div>
         
         <div className="relative max-w-4xl mx-auto">
-          {/* Slider controls */}
+          {/* ЛІВА КНОПКА - ПОСЕРЕДИНІ З ЛІВОГО БОКУ */}
           <button 
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               goToPrev();
             }}
-            className="absolute top-1/2 -left-4 md:-left-12 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
+            className="absolute top-1/2 -left-6 md:-left-16 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
             aria-label="Попередній відгук"
             type="button"
           >
@@ -39,13 +39,14 @@ const Testimonials: React.FC = () => {
             </svg>
           </button>
           
+          {/* ПРАВА КНОПКА - ПОСЕРЕДИНІ З ПРАВОГО БОКУ */}
           <button 
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               goToNext();
             }}
-            className="absolute top-1/2 -right-4 md:-right-12 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
+            className="absolute top-1/2 -right-6 md:-right-16 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
             aria-label="Наступний відгук"
             type="button"
           >
@@ -54,7 +55,7 @@ const Testimonials: React.FC = () => {
             </svg>
           </button>
           
-          {/* Testimonials slider */}
+          {/* ВІДГУКИ SLIDER */}
           <div className="overflow-hidden py-8">
             <div 
               className="flex transition-transform duration-500 ease-in-out"
@@ -62,27 +63,30 @@ const Testimonials: React.FC = () => {
             >
               {testimonials.map((testimonial) => (
                 <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
-                  <div className="card text-center">
+                  <div className="card text-center min-h-[350px] flex flex-col justify-between">
+                    {/* Рейтинг зірочки */}
                     <div className="mb-6">
                       {[...Array(5)].map((_, i) => (
                         <span key={i} className="text-gold text-2xl mx-1">★</span>
                       ))}
                     </div>
                     
-                    <blockquote className="text-gray-200 text-lg italic mb-8">
-                      "{testimonial.text}"
+                    {/* Текст відгуку */}
+                    <blockquote className="text-gray-200 text-base md:text-lg italic mb-8 flex-grow flex items-center leading-relaxed px-4">
+                      <span>"{testimonial.text}"</span>
                     </blockquote>
                     
-                    <div className="flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full overflow-hidden mr-4 bg-purple/30 flex items-center justify-center">
+                    {/* Автор відгуку */}
+                    <div className="flex items-center justify-center mt-auto">
+                      <div className="w-14 h-14 rounded-full overflow-hidden mr-4 bg-gradient-to-br from-purple/40 to-darkblue/40 flex items-center justify-center border-2 border-gold/30">
                         {testimonial.image ? (
                           <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-gold text-xl">{testimonial.name[0]}</span>
+                          <span className="text-gold text-xl font-bold">{testimonial.name[0]}</span>
                         )}
                       </div>
                       <div className="text-left">
-                        <h4 className="font-semibold gold-gradient">{testimonial.name}</h4>
+                        <h4 className="font-semibold gold-gradient text-lg">{testimonial.name}</h4>
                         <p className="text-sm text-gray-400">{testimonial.location}</p>
                       </div>
                     </div>
@@ -92,12 +96,16 @@ const Testimonials: React.FC = () => {
             </div>
           </div>
           
-          {/* Dots indicator */}
+          {/* DOTS INDICATOR */}
           <div className="flex justify-center mt-8 space-x-3">
             {testimonials.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setActiveIndex(i)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setActiveIndex(i);
+                }}
                 className={`w-4 h-4 rounded-full transition-all duration-300 border-2 ${
                   i === activeIndex 
                     ? 'bg-gold border-gold w-8 shadow-lg' 
@@ -107,6 +115,13 @@ const Testimonials: React.FC = () => {
                 type="button"
               />
             ))}
+          </div>
+          
+          {/* ІНДИКАТОР ПРОГРЕСУ */}
+          <div className="text-center mt-6">
+            <span className="text-gray-400 text-sm bg-darkblue/30 px-4 py-2 rounded-full">
+              Відгук {activeIndex + 1} з {testimonials.length}
+            </span>
           </div>
         </div>
       </div>
