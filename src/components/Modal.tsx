@@ -61,17 +61,21 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       }, 100);
       
       document.body.style.overflow = 'hidden';
+      // Блокуємо всі кліки позаду модального вікна
+      document.body.style.pointerEvents = 'none';
       
       return () => {
         clearTimeout(timeoutId);
         document.removeEventListener('click', handleClickOutside);
         document.removeEventListener('keydown', handleEscape);
         document.body.style.overflow = 'auto';
+        document.body.style.pointerEvents = 'auto';
       };
     }
 
     return () => {
       document.body.style.overflow = 'auto';
+      document.body.style.pointerEvents = 'auto';
     };
   }, [isOpen, onClose]);
 
@@ -197,12 +201,19 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-darkblue/80 backdrop-blur-sm"></div>
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      style={{ zIndex: 9999 }}
+    >
+      <div 
+        className="absolute inset-0 bg-darkblue/80 backdrop-blur-sm" 
+        style={{ zIndex: 9998, pointerEvents: 'auto' }}
+      ></div>
       
       <div 
         ref={modalRef}
         className="relative bg-darkblue border border-gold/30 rounded-lg shadow-xl max-w-md w-full p-6 md:p-8"
+        style={{ zIndex: 10000, pointerEvents: 'auto' }}
       >
         <button 
           onClick={onClose}

@@ -4,10 +4,9 @@ import { trackButtonClick } from '../utils/analytics';
 
 interface HeaderProps {
   onOrderClick: () => void;
-  showModal?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOrderClick, showModal = false }) => {
+const Header: React.FC<HeaderProps> = ({ onOrderClick }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -19,13 +18,6 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick, showModal = false }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Закриваємо мобільне меню коли відкривається модаль
-  useEffect(() => {
-    if (showModal) {
-      setIsMobileMenuOpen(false);
-    }
-  }, [showModal]);
 
   return (
     <header 
@@ -58,12 +50,7 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick, showModal = false }) => {
           <a href="#contact" className="nav-link">Контакти</a>
         </nav>
         
-        <button 
-          onClick={onOrderClick} 
-          className={`hidden md:block btn-primary transition-opacity duration-300 ${
-            showModal ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-        >
+        <button onClick={onOrderClick} className="hidden md:block btn-primary">
           Замовити розклад
         </button>
       </div>
@@ -84,9 +71,7 @@ const Header: React.FC<HeaderProps> = ({ onOrderClick, showModal = false }) => {
               onOrderClick(); 
               setIsMobileMenuOpen(false);
             }} 
-            className={`btn-primary w-full text-center transition-opacity duration-300 ${
-              showModal ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}
+            className="btn-primary w-full text-center"
           >
             Замовити розклад
           </button>
