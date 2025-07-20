@@ -22,11 +22,11 @@ const Testimonials: React.FC = () => {
           </p>
         </div>
         
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-6xl mx-auto px-20">
           {/* Slider controls */}
           <button 
             onClick={goToPrev}
-            className="absolute top-1/2 -left-4 md:-left-12 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
+            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
             aria-label="Попередній відгук"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,7 +36,7 @@ const Testimonials: React.FC = () => {
           
           <button 
             onClick={goToNext}
-            className="absolute top-1/2 -right-4 md:-right-12 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
+            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gradient-to-r from-darkblue to-purple hover:from-purple hover:to-darkblue text-gold p-3 md:p-4 rounded-full transition-all duration-300 z-30 border-2 border-gold/50 hover:border-gold shadow-2xl hover:shadow-gold/30 hover:scale-110"
             aria-label="Наступний відгук"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
