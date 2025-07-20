@@ -35,7 +35,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      const target = event.target as Element;
+      
+      // Додаткові перевірки для запобігання закриття при кліку на форму
+      if (modalRef.current && 
+          !modalRef.current.contains(target) && 
+          !target.closest('form') && 
+          !target.closest('.bg-darkblue') &&
+          !target.matches('input, select, textarea, label, option')) {
         onClose();
       }
     };
@@ -47,14 +54,23 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscape);
+      // Використовуємо setTimeout для уникнення конфліктів з іншими обробниками
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+      }, 100);
+      
       document.body.style.overflow = 'hidden';
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+        document.body.style.overflow = 'auto';
+      };
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'auto';
     };
   }, [isOpen, onClose]);
@@ -106,7 +122,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       // Відстеження відправки форми
       trackFormSubmit('modal_form', formData.service || 'quick_consultation');
       
-      const response = await fetch('http://localhost:3000/api/send-telegram', {
+      const response = await fetch('/api/send-telegram', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
