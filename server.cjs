@@ -49,11 +49,11 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // TELEGRAM CONFIGURATION
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '7853031712:AAHS29d-x7_mWZ1zoNzP8kCbTOxW0vtI18w';
 
-// Chat IDs (same as before)
+// Chat IDs - тільки адміни бота (НЕ сам бот!)
 const TELEGRAM_CHAT_IDS = [
-    '603047391',        // Roman
-    '1305926338',       // angela
-    '7853031712'        // Bot
+    '603047391',        // Roman - основний адмін
+    '1305926338'        // Angela - додатковий адмін
+    // Прибрали '7853031712' - це ID бота, він не може отримувати повідомлення
 ];
 
 // Services configuration
@@ -160,7 +160,7 @@ app.post('/api/send-telegram', async (req, res) => {
     }
 
     message += "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
-    message += "\n🌐 <b>Сайт:</b> " + (process.env.RAILWAY_PUBLIC_DOMAIN || 'theglamstyle.com.ua');
+    message += "\n🌐 <b>Сайт:</b> " + (process.env.RAILWAY_PUBLIC_DOMAIN || 'miaxialip.com.ua');
     message += "\n📅 <b>Дата подачі:</b> " + new Date().toLocaleString('uk-UA', { timeZone: 'Europe/Kiev' });
 
     console.log('📤 Надсилаю повідомлення до Telegram...');
