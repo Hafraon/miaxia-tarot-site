@@ -139,7 +139,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       if (response.ok && result.success) {
         // Відстеження успішної конверсії
         const serviceInfo = result.service || SERVICES[formData.service as keyof typeof SERVICES];
-        const servicePrice = serviceInfo ? serviceInfo.price : 300;
+        const servicePrice = serviceInfo ? serviceInfo.originalPrice : 400; // Використовуємо повну ціну
         const serviceName = serviceInfo ? serviceInfo.name : 'Швидка консультація';
         
         trackQuickOrderConversion(serviceName, servicePrice);
@@ -227,9 +227,23 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <h3 className="text-2xl font-bold gold-gradient mb-4">Записатися на консультацію</h3>
         
-        <p className="text-gray-300 mb-6">
+        <p className="text-gray-300 mb-4">
           Залиште свої контактні дані, і я зв'яжуся з вами найближчим часом для узгодження деталей.
         </p>
+        
+        <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-3 mb-6">
+          <p className="text-sm text-blue-200">
+            💡 <strong>Підказка:</strong> В Telegram боті всі ці ж консультації дешевші на 20-30%!
+          </p>
+          <a 
+            href="https://t.me/miaxialiptarotbot" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-300 hover:text-blue-200 text-sm underline"
+          >
+            Перейти в бот →
+          </a>
+        </div>
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -287,7 +301,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
               <option value="">Оберіть послугу</option>
               {Object.entries(SERVICES).map(([key, service]) => (
                 <option key={key} value={key}>
-                  {service.name} - {service.price} грн
+                  {service.name} - {service.originalPrice} грн
                 </option>
               ))}
             </select>

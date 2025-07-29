@@ -119,7 +119,7 @@ const OrderForm: React.FC = () => {
       if (response.ok && result.success) {
         // Відстеження успішної конверсії
         const serviceInfo = result.service || SERVICES[formData.service as keyof typeof SERVICES];
-        const servicePrice = serviceInfo ? serviceInfo.price : 500;
+        const servicePrice = serviceInfo ? serviceInfo.originalPrice : 500; // Використовуємо повну ціну
         const serviceName = serviceInfo ? serviceInfo.name : 'Повна консультація таро';
         
         trackOrderFormConversion(serviceName, servicePrice);
@@ -239,9 +239,9 @@ const OrderForm: React.FC = () => {
                 <option value="">Оберіть послугу</option>
                 {Object.entries(SERVICES).map(([key, service]) => (
                   <option key={key} value={key}>
-                    {service.name} - {service.price} грн
+                    {service.name} - {service.originalPrice} грн
                   </option>
-                ))}
+                ))}                
               </select>
             </div>
             

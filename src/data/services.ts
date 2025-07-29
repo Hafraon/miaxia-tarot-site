@@ -15,8 +15,9 @@ export const getServicesList = () => {
     id: key,
     title: service.name,
     description: service.description,
-    price: service.price,
+    price: service.originalPrice, // ЗМІНЕНО: показуємо повну ціну на сайті
     originalPrice: service.originalPrice,
+    botPrice: service.price, // Додано для порівняння
     discount: Math.round(((service.originalPrice - service.price) / service.originalPrice) * 100)
   }));
 };

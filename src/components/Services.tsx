@@ -58,11 +58,10 @@ const Services: React.FC = () => {
                   <span className="text-2xl font-bold text-gold" itemProp="price">{service.price}</span>
                   <meta itemProp="priceCurrency" content="UAH" />
                   <span className="text-gold">грн</span>
-                  {service.originalPrice > service.price && (
-                    <span className="text-gray-400 line-through text-lg">{service.originalPrice} грн</span>
-                  )}
                 </div>
-                <p className="text-sm text-gray-400">Спеціальна ціна</p>
+                <p className="text-sm text-gray-400">
+                  В телеграм боті: <span className="text-accent font-semibold">{service.botPrice} грн</span> (-{service.discount}%)
+                </p>
                 <meta itemProp="availability" content="https://schema.org/InStock" />
               </div>
               
