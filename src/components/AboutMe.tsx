@@ -22,7 +22,7 @@ const AboutMe: React.FC = () => {
           <div className="flex justify-center items-center">
             <div className="mr-6">
               <div className="bg-gold/20 px-4 py-2 rounded-lg text-center border border-gold/30">
-                <span className="block text-2xl font-bold text-gold">2000+</span>
+                <span className="block text-2xl font-bold text-gold">10 000+</span>
                 <span className="text-sm text-gray-300">задоволених клієнтів</span>
               </div>
             </div>

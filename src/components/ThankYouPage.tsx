@@ -49,9 +49,9 @@ const ThankYouPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             <div className="card">
               <Clock className="h-8 w-8 text-gold mx-auto mb-4" />
-              <h3 className="text-xl font-semibold gold-gradient mb-2">📞 Зв'язок з вами</h3>
+              <h3 className="text-xl font-semibold gold-gradient mb-2">📱 Зв'язок в Instagram</h3>
               <p className="text-gray-300">
-                Ми зв'яжемося з вами протягом 2-3 годин для уточнення деталей та призначення зручного часу консультації.
+                З вами зв'яжуться в Instagram <a href="https://instagram.com/miaxialip" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold/80 font-semibold underline">@miaxialip</a> для уточнення деталей та призначення зручного часу консультації.
               </p>
             </div>
 
@@ -64,37 +64,43 @@ const ThankYouPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Social Media Section */}
-          <div className="bg-purple/20 rounded-lg p-8 mb-8">
-            <h2 className="text-2xl font-bold gold-gradient mb-6">Залишайтеся на зв'язку</h2>
+          {/* Instagram як основний канал */}
+          <div className="bg-gradient-to-r from-purple/20 to-pink/20 rounded-lg p-8 mb-8 border border-gold/30">
+            <h2 className="text-2xl font-bold gold-gradient mb-6 text-center">💬 Основне спілкування в Instagram</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="text-center mb-6">
+              <p className="text-gray-200 mb-4">
+                Всі консультації, розклади та спілкування відбуваються в Instagram. Саме там ви отримаєте свій персональний розклад і зможете залишити відгук.
+              </p>
+              
               <a 
                 href="https://www.instagram.com/miaxialip?igsh=bzF5bGZ6N3N3ODRt&utm_source=qr" 
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackSocialClick('instagram', 'thank_you_page')}
-                className="flex items-center justify-center gap-3 bg-darkblue/70 p-4 rounded-lg border border-gold/30 hover:border-gold/60 hover:bg-darkblue/90 transition-all duration-300 group"
+                className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 p-4 rounded-lg transition-all duration-300 group text-white font-semibold text-lg"
               >
-                <Instagram className="h-6 w-6 text-gold group-hover:scale-110 transition-transform duration-300" />
-                <div className="text-left">
-                  <div className="text-sm text-gray-400">📱 Слідкуйте за нами</div>
-                  <div className="font-semibold text-white">Instagram @miaxialip</div>
+                <Instagram className="h-7 w-7 group-hover:scale-110 transition-transform duration-300" />
+                <div>
+                  <div className="text-sm opacity-90">📱 Перейти в Instagram</div>
+                  <div>@miaxialip</div>
                 </div>
               </a>
-
+            </div>
+            
+            <div className="text-center">
+              <p className="text-gray-300 text-sm">
+                <strong className="text-gold">Також підписуйтесь на наш Telegram канал:</strong>
+              </p>
               <a 
                 href="https://t.me/miaxiataro" 
                 target="_blank"
                 rel="noopener noreferrer"
-               onClick={() => trackSocialClick('telegram', 'thank_you_page')}
-                className="flex items-center justify-center gap-3 bg-darkblue/70 p-4 rounded-lg border border-gold/30 hover:border-gold/60 hover:bg-darkblue/90 transition-all duration-300 group"
+                onClick={() => trackSocialClick('telegram', 'thank_you_page')}
+                className="inline-flex items-center gap-2 mt-2 text-blue-400 hover:text-blue-300 transition-colors"
               >
-                <Send className="h-6 w-6 text-gold group-hover:scale-110 transition-transform duration-300" />
-                <div className="text-left">
-                  <div className="text-sm text-gray-400">📺 Приєднуйтесь до каналу</div>
-                  <div className="font-semibold text-white">@miaxiataro</div>
-                </div>
+                <Send className="h-4 w-4" />
+                @miaxiataro - щоденні розклади та інсайти
               </a>
             </div>
           </div>
@@ -106,10 +112,11 @@ const ThankYouPage: React.FC = () => {
             </p>
             <ul className="text-left max-w-md mx-auto space-y-2">
               <li>• Перевіримо вашу заявку</li>
-              <li>• Зв'яжемося для уточнення деталей</li>
-              <li>• Призначимо зручний час консультації</li>
+              <li>• Зв'яжемося в Instagram @miaxialip</li>
+              <li>• Уточнимо деталі та призначимо час</li>
               <li>• Проведемо розклад таро</li>
-              <li>• Надамо детальну інтерпретацію</li>
+              <li>• Надішлемо детальну інтерпретацію в Instagram</li>
+              <li>• Ви зможете залишити відгук там же</li>
             </ul>
           </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Mail, Instagram, GitBranch as BrandTiktok, MessageCircle, Send } from 'lucide-react';
+import { Sparkles, Instagram, GitBranch as BrandTiktok, MessageCircle, Send } from 'lucide-react';
 import { trackSocialClick } from '../utils/analytics';
 
 const Footer: React.FC = () => {
@@ -32,13 +32,25 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4 gold-gradient">Контакти</h4>
             
+            <div className="bg-gradient-to-r from-purple/10 to-pink/10 border border-gold/20 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Instagram className="h-5 w-5 text-gold" />
+                <span className="text-gold font-semibold">Основний канал зв'язку</span>
+              </div>
+              <a 
+                href="https://www.instagram.com/miaxialip?igsh=bzF5bGZ6N3N3ODRt&utm_source=qr" 
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackSocialClick('instagram', 'footer')}
+                className="text-white hover:text-gold transition-colors duration-300 font-medium"
+              >
+                @miaxialip
+              </a>
+              <p className="text-xs text-gray-400 mt-1">Консультації, розклади, відгуки</p>
+            </div>
+            
             <ul className="space-y-3">
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-gold" />
-                <a href="mailto:info@miaxialip.com" className="hover:text-gold transition-colors duration-300" itemProp="email">
-                  info@miaxialip.com
-                </a>
-              </li>
+              {/* Email прибрано - не існує */}
             </ul>
             
             <h4 className="text-lg font-semibold mt-6 mb-4 gold-gradient">Години роботи</h4>

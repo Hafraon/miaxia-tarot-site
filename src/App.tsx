@@ -9,13 +9,13 @@ import SpecialOffer from './components/SpecialOffer';
 import OrderForm from './components/OrderForm';
 import Footer from './components/Footer';
 import Modal from './components/Modal';
-import ExitPopup from './components/ExitPopup';
+
 import CardOfDay from './components/CardOfDay';
 import ThankYouPage from './components/ThankYouPage';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
-  const [showExitPopup, setShowExitPopup] = useState(false);
+
 
   // Ініціалізація Google Ads
   React.useEffect(() => {
@@ -52,21 +52,7 @@ function App() {
     };
   }, []);
 
-  // Handle exit intent
-  React.useEffect(() => {
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !localStorage.getItem('exitPopupShown')) {
-        setShowExitPopup(true);
-        localStorage.setItem('exitPopupShown', 'true');
-      }
-    };
 
-    document.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      document.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
 
   const HomePage = () => (
     <>
@@ -107,32 +93,7 @@ function App() {
         <CardOfDay onFullReadingClick={() => setShowModal(true)} />
         <Services />
         
-        {/* Банер про знижки в боті */}
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple/20 to-blue/20 border-2 border-gold/30 rounded-lg p-6 text-center">
-              <h3 className="text-2xl font-bold gold-gradient mb-3">
-                🤖 Знижки до 30% в Telegram боті!
-              </h3>
-              <p className="text-gray-200 mb-4">
-                Отримайте ті ж консультації за нижчими цінами + безкоштовні розклади
-              </p>
-              <div className="flex flex-wrap gap-4 justify-center text-sm">
-                <span className="bg-darkblue/50 px-3 py-1 rounded">• 1 питання: 70 грн замість 100</span>
-                <span className="bg-darkblue/50 px-3 py-1 rounded">• Любовний: 280 грн замість 350</span>
-                <span className="bg-darkblue/50 px-3 py-1 rounded">• Матриця: 570 грн замість 650</span>
-              </div>
-              <a 
-                href="https://t.me/miaxialiptarotbot" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-300"
-              >
-                📱 Перейти в бот
-              </a>
-            </div>
-          </div>
-        </section>
+
         
         <AboutMe />
         <Testimonials />
@@ -143,11 +104,7 @@ function App() {
       <Footer />
       
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} />
-      <ExitPopup 
-        isOpen={showExitPopup} 
-        onClose={() => setShowExitPopup(false)} 
-        onOrderClick={() => setShowModal(true)}
-      />
+
     </>
   );
 
