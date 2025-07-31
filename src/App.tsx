@@ -113,7 +113,7 @@ function App() {
       <div className="min-h-screen relative">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/thank-you" element={<ThankYouPage />} />
+          <Route path="/old-thank-you" element={<ThankYouPage />} />
         </Routes>
       </div>
     </Router>

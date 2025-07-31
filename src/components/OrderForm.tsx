@@ -129,7 +129,7 @@ const OrderForm: React.FC = () => {
         
         // Redirect to thank you page after short delay
         setTimeout(() => {
-          navigate('/thank-you');
+          window.location.href = '/thank-you.html';
         }, 2000);
       } else {
         throw new Error(result.error || 'Помилка відправки');

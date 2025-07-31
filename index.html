@@ -192,7 +192,7 @@
       // Перевіряємо чи це сторінка подяки
       document.addEventListener('DOMContentLoaded', function() {
         const currentPath = window.location.pathname;
-        const isThankYouPage = currentPath === '/thank-you' || currentPath.includes('thank-you');
+        const isThankYouPage = currentPath === '/thank-you.html' || currentPath.includes('thank-you');
         
         if (isThankYouPage) {
           console.log('🎯 Thank You page detected - sending enhanced conversion data');
@@ -240,10 +240,10 @@
             'currency': 'UAH'
           });
           
-          // Друга конверсія для другого аккаунта (якщо потрібно)
+          // Конверсії для другого аккаунта
           window.dataLayer.push({
             'event': 'conversion',
-            'send_to': 'AW-17416940719/ВАША_МІТКА_КОНВЕРСІЇ',
+            'send_to': 'AW-17416940719/waLYCNbXjvwaEK_ZhfFA',
             'value': 70,
             'currency': 'UAH'
           });
@@ -251,8 +251,8 @@
           // Логування для відлагодження
           console.log('📊 Enhanced conversion data sent:');
           console.log('- GA4 purchase event');
-          console.log('- Google Ads conversion (AW-7239891504)');
-          console.log('- Google Ads conversion (AW-17416940719)');
+          console.log('- Google Ads conversion (AW-7239891504): urnsCLD0n_waEK_ZhfFA');
+          console.log('- Google Ads conversion (AW-17416940719): waLYCNbXjvwaEK_ZhfFA');
           console.log('- Value: 70 UAH');
           
           // Відправляємо дані про успішне замовлення в консоль для перевірки
