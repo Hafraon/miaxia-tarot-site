@@ -1,35 +1,36 @@
-# Безпека та налаштування для MiaxiaLip сайту
+# MiaxiaLip Website Configuration
 
-# Увімкнути перезапис URL
 RewriteEngine On
 
-# Заборонити доступ до системних файлів
+# Security - Block access to sensitive files
 <Files ~ "^\.(htaccess|htpasswd|ini|phps|fla|psd|log)$">
     Order Allow,Deny
     Deny from all
 </Files>
 
-# Заборонити доступ до папок з крапкою
+# Block access to directories starting with dot
 RedirectMatch 403 /\..*$
 
-# CORS для API
+# CORS Headers for API endpoints
 <IfModule mod_headers.c>
     Header always set Access-Control-Allow-Origin "*"
     Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
     Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
 </IfModule>
 
-# Обробка OPTIONS запитів для CORS
+# Handle CORS preflight requests
 RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^(.*)$ $1 [R=200,L]
 
-# Перенаправлення для PHP файлів
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^telegram-notify$ /telegram-notify.php [L]
-RewriteRule ^track-conversion$ /track-conversion.php [L]
+# API Routes - redirect to public folder
+RewriteRule ^telegram-notify\.php$ /public/telegram-notify.php [L]
+RewriteRule ^track-conversion\.php$ /public/track-conversion.php [L] 
+RewriteRule ^test\.php$ /public/test.php [L]
 
-# Кешування статичних файлів
+# Handle public folder access
+RewriteRule ^public/(.*)$ public/$1 [L]
+
+# Caching for static assets
 <IfModule mod_expires.c>
     ExpiresActive on
     ExpiresByType text/css "access plus 1 year"
@@ -44,7 +45,7 @@ RewriteRule ^track-conversion$ /track-conversion.php [L]
     ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
-# Стиснення gzip
+# Gzip compression
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/html
@@ -57,57 +58,23 @@ RewriteRule ^track-conversion$ /track-conversion.php [L]
     AddOutputFilterByType DEFLATE application/x-javascript
 </IfModule>
 
-# Налаштування PHP (якщо дозволено)
-<IfModule mod_php.c>
-    php_value upload_max_filesize 64M
-    php_value post_max_size 64M
-    php_value max_execution_time 300
-    php_value max_input_vars 3000
-</IfModule>
-
-# Безпека - приховати версію сервера
-ServerTokens Prod
-
-# Заборонити листинг директорій
-Options -Indexes
-
-# Налаштування для React Router (SPA)
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    # Обробляти API запити до PHP
-    RewriteRule ^api/telegram-notify$ telegram-notify.php [L]
-    RewriteRule ^api/track-conversion$ track-conversion.php [L]
-    
-    # Перенаправлення для React Router
-    RewriteBase /
-    RewriteRule ^index\.html$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.html [L]
-</IfModule>
-
-# Заборонити виконання PHP в папці uploads (якщо є)
-<Directory "uploads">
-    <Files "*.php">
-        Order Allow,Deny
-        Deny from all
-    </Files>
-</Directory>
-
-# Налаштування MIME типів
-<IfModule mod_mime.c>
-    AddType application/javascript .js
-    AddType text/css .css
-    AddType image/svg+xml .svg
-    AddType font/woff .woff
-    AddType font/woff2 .woff2
-</IfModule>
-
-# Безпека headers
+# Security headers
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options nosniff
     Header always set X-Frame-Options DENY
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Handle React Router (SPA) - MUST BE LAST
+<IfModule mod_rewrite.c>
+    RewriteBase /
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule . /index.html [L]
 </IfModule>
