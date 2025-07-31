@@ -2,7 +2,6 @@
   "name": "miaxialip-tarot",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "description": "Professional Tarot reading website with Telegram integration",
   "main": "server.cjs",
   "scripts": {
