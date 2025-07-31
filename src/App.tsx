@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { initGoogleAds, trackPageView, trackScroll, trackPageLoad } from './utils/analytics';
 import Header from './components/Header';
 import Services from './components/Services';
@@ -108,11 +108,30 @@ function App() {
     </>
   );
 
+  // Компонент для редіректу на HTML сторінку
+  const ThankYouRedirect = () => {
+    React.useEffect(() => {
+      window.location.href = '/thank-you.html';
+    }, []);
+    
+    return (
+      <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-darkblue via-purple to-blue">
+        <div className="absolute inset-0 bg-stars opacity-20"></div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
+          <p className="text-white">Перенаправляємо на сторінку подяки...</p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Router>
-      <div className="min-h-screen relative">
+      <div className="min-h-screen relative bg-gradient-to-br from-darkblue via-purple to-blue">
+        <div className="absolute inset-0 bg-stars opacity-20"></div>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/thank-you" element={<ThankYouRedirect />} />
           <Route path="/old-thank-you" element={<ThankYouPage />} />
         </Routes>
       </div>
