@@ -23,9 +23,25 @@
     </script>
     
     <style>
+        /* Імпорт шрифтів */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --darkblue: #0a1128;
+            --gold: #d4af37;
+            --purple: #6d28d9;
+            --blue: #1e3a8a;
+        }
+        
         body {
             font-family: 'Raleway', Arial, sans-serif;
-            background: linear-gradient(135deg, #0a1128 0%, #1e3c72 50%, #2a5298 100%);
+            /* Використовуємо той самий фон що і основний сайт */
+            background: var(--darkblue);
+            background-image: url('https://images.pexels.com/photos/998641/pexels-photo-998641.jpeg?auto=compress&cs=tinysrgb&w=1600');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
             color: white;
             margin: 0;
             padding: 20px;
@@ -33,68 +49,146 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
+        
+        /* Додаємо накладку для кращої читабельності */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 17, 40, 0.85);
+            backdrop-filter: blur(1px);
+            z-index: -1;
+        }
+        
         .thank-you-container {
             text-align: center;
             max-width: 600px;
-            background: rgba(255, 255, 255, 0.1);
+            /* Використовуємо стиль карток з основного сайту */
+            background: rgba(10, 17, 40, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(109, 40, 217, 0.3);
             padding: 40px;
             border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 25px rgba(212, 175, 55, 0.1);
+            position: relative;
+            z-index: 10;
         }
+        
         .success-icon {
             font-size: 80px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
         }
+        
         h1 {
-            color: #d4af37;
+            /* Використовуємо золотий градієнт з основного сайту */
+            background: linear-gradient(to right, #d4af37, #f5e0a2, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 20px;
             font-size: 2.5em;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
         }
+        
         .message {
             font-size: 1.2em;
             line-height: 1.6;
             margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
         }
+        
         .contact-info {
-            background: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 15px;
             margin-bottom: 30px;
+            backdrop-filter: blur(8px);
         }
+        
+        .contact-info h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+        
         .btn {
             display: inline-block;
             background: linear-gradient(135deg, #d4af37, #f5e0a2);
-            color: #0a1128;
+            color: var(--darkblue);
             padding: 15px 30px;
             text-decoration: none;
             border-radius: 25px;
-            font-weight: bold;
+            font-weight: 600;
             margin: 10px;
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            border: none;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
         }
+        
         .btn:hover {
             transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+            filter: brightness(1.1);
         }
+        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+        
         .debug-info {
             margin-top: 20px;
             padding: 15px;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(109, 40, 217, 0.3);
             border-radius: 10px;
             font-size: 12px;
             font-family: monospace;
             text-align: left;
+            backdrop-filter: blur(8px);
         }
+        
         .status-ok { color: #4CAF50; }
         .status-blocked { color: #f44336; }
         .status-warning { color: #ff9800; }
+        
+        /* Адаптивність */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .thank-you-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .message {
+                font-size: 1.1em;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px 0;
+                width: calc(100% - 20px);
+            }
+        }
     </style>
     
     <!-- ENHANCED CONVERSION TRACKING -->
