@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="uk">
   <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NVMR3CJ2');</script>
+    <!-- End Google Tag Manager -->
+    
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/tarot.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,9 +17,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
     <meta name="description" content="MiaxiaLip - пізнайте таємниці долі разом зі справжнім майстром таро. Індивідуальні розклади, любовні прогнози, кар'єрне консультування." />
+    
+    <!-- Google Ads -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-7239891504"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17416940719"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      
+      gtag('config', 'AW-7239891504');
+      gtag('config', 'AW-17416940719');
+      gtag('config', 'G-GDEVM541ZP');
+      
+      console.log('✅ Google Ads & Analytics ініціалізовано');
+    </script>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVMR3CJ2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Мінімальна інтеграція Telegram без зайвих доповнень -->
+    <script>
+      // Telegram конфігурація
+      window.TELEGRAM_CONFIG = {
+        chatId: '603047391',
+        botToken: '7322148325:AAHWjMEFuBVVoUhsPQ6SOsSTBE2fxFZfeXU'
+      };
+
+      // Мінімальна Telegram функція
+      window.sendToTelegram = async function(formData) {
+        try {
+          const response = await fetch('/public/telegram-notify.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+          return await response.json();
+        } catch (error) {
+          console.error('Telegram error:', error);
+          return { success: false, error: error.message };
+        }
+      };
+
+      console.log('✅ Telegram система готова');
+    </script>
   </body>
 </html>

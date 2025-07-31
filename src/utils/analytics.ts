@@ -6,27 +6,24 @@ declare global {
   }
 }
 
-export const GOOGLE_ADS_ID = 'AW-11069742071'; // Замініть на ваш реальний Google Ads ID
+// ВИПРАВЛЕНО: Правильні Google Ads ID з GTM
+export const GOOGLE_ADS_IDS = {
+  PRIMARY: 'AW-7239891504',   // Основний аккаунт
+  SECONDARY: 'AW-17416940719' // Додатковий аккаунт
+};
 
-// Conversion Labels для різних типів замовлень
+// ВИПРАВЛЕНО: Правильні Conversion Labels з GTM
 export const CONVERSION_LABELS = {
-  ORDER_FORM: 'LABEL_ORDER_FORM',        // Основна форма замовлення
-  QUICK_ORDER: 'LABEL_QUICK_ORDER',      // Швидке замовлення (модальне вікно)
-  CONSULTATION: 'LABEL_CONSULTATION'      // Консультації
+  PRIMARY_CONVERSION: 'urnsCLD0n_waEK_ZhfFA',      // AW-7239891504
+  SECONDARY_CONVERSION: 'waLYCNbXjvwaEK_ZhfFA'     // AW-17416940719
 };
 
-// Ініціалізація Google Ads
+// Ініціалізація Google Ads (вже в HTML)
 export const initGoogleAds = () => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', GOOGLE_ADS_ID, {
-      page_title: 'MiaxiaLip Tarot',
-      page_location: window.location.href,
-      send_page_view: false
-    });
-  }
+  console.log('✅ Google Ads ініціалізація (вже в HTML)');
 };
 
-// Відстеження переходів між сторінками (для аналітики)
+// Відстеження переходів між сторінками
 export const trackPageView = (page_title: string, page_location: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'page_view', {
@@ -37,69 +34,74 @@ export const trackPageView = (page_title: string, page_location: string) => {
   }
 };
 
-// Відстеження початку заповнення форми
+// ВИПРАВЛЕНО: Головна функція конверсії з правильними ID
+export const trackMainConversion = (service_name: string, value: number = 100) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    // Конверсія для основного аккаунта
+    window.gtag('event', 'conversion', {
+      'send_to': `${GOOGLE_ADS_IDS.PRIMARY}/${CONVERSION_LABELS.PRIMARY_CONVERSION}`,
+      'value': value,
+      'currency': 'UAH',
+      'transaction_id': `order_${Date.now()}`,
+      'service_name': service_name
+    });
+    
+    // Конверсія для додаткового аккаунта
+    window.gtag('event', 'conversion', {
+      'send_to': `${GOOGLE_ADS_IDS.SECONDARY}/${CONVERSION_LABELS.SECONDARY_CONVERSION}`,
+      'value': value,
+      'currency': 'UAH',
+      'transaction_id': `order_alt_${Date.now()}`,
+      'service_name': service_name
+    });
+    
+    // GA4 подія
+    window.gtag('event', 'purchase', {
+      'transaction_id': `tarot_${Date.now()}`,
+      'value': value,
+      'currency': 'UAH',
+      'event_category': 'Замовлення',
+      'event_label': service_name
+    });
+    
+    console.log('✅ Конверсії відправлені:', service_name, value);
+  }
+};
+
+// Використовуємо головну функцію для всіх типів конверсій
+export const trackOrderFormConversion = (service_name: string, value: number = 100) => {
+  trackMainConversion(service_name, value);
+};
+
+export const trackQuickOrderConversion = (service_name: string, value: number = 100) => {
+  trackMainConversion(service_name, value);
+};
+
+export const trackConsultationConversion = (service_name: string, value: number = 100) => {
+  trackMainConversion(service_name, value);
+};
+
+// Відстеження форм
 export const trackFormStart = (form_name: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'form_start', {
       event_category: 'engagement',
-      event_label: form_name,
-      form_type: 'tarot_consultation'
+      event_label: form_name
     });
   }
 };
 
-// Відстеження відправки форми (не конверсія)
 export const trackFormSubmit = (form_name: string, service_type?: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'form_submit', {
       event_category: 'engagement',
       event_label: form_name,
-      service_type: service_type || 'general_consultation'
+      service_type: service_type || 'general'
     });
   }
 };
 
-// Google Ads конверсії для різних типів замовлень
-export const trackOrderFormConversion = (service_name: string, value: number = 500) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'conversion', {
-      'send_to': `${GOOGLE_ADS_ID}/${CONVERSION_LABELS.ORDER_FORM}`,
-      'value': value,
-      'currency': 'UAH',
-      'transaction_id': `order_${Date.now()}`,
-      'service_name': service_name,
-      'order_type': 'full_form'
-    });
-  }
-};
-
-export const trackQuickOrderConversion = (service_name: string, value: number = 300) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'conversion', {
-      'send_to': `${GOOGLE_ADS_ID}/${CONVERSION_LABELS.QUICK_ORDER}`,
-      'value': value,
-      'currency': 'UAH',
-      'transaction_id': `quick_${Date.now()}`,
-      'service_name': service_name,
-      'order_type': 'quick_modal'
-    });
-  }
-};
-
-export const trackConsultationConversion = (service_name: string, value: number = 400) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'conversion', {
-      'send_to': `${GOOGLE_ADS_ID}/${CONVERSION_LABELS.CONSULTATION}`,
-      'value': value,
-      'currency': 'UAH',
-      'transaction_id': `consultation_${Date.now()}`,
-      'service_name': service_name,
-      'order_type': 'consultation'
-    });
-  }
-};
-
-// Відстеження кліків по кнопках (для аналітики)
+// Відстеження кліків
 export const trackButtonClick = (button_name: string, location: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'click', {
@@ -110,18 +112,15 @@ export const trackButtonClick = (button_name: string, location: string) => {
   }
 };
 
-// Відстеження витягування карти дня
 export const trackCardDraw = () => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'card_draw', {
       event_category: 'engagement',
-      event_label: 'daily_card',
-      service_type: 'free_service'
+      event_label: 'daily_card'
     });
   }
 };
 
-// Відстеження переходів по соціальних мережах
 export const trackSocialClick = (platform: string, action: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'social_click', {
@@ -132,19 +131,6 @@ export const trackSocialClick = (platform: string, action: string) => {
   }
 };
 
-// Відстеження часу на сторінці
-export const trackTimeOnPage = (page_name: string, time_seconds: number) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'page_engagement', {
-      event_category: 'engagement',
-      event_label: page_name,
-      value: time_seconds,
-      engagement_type: 'time_spent'
-    });
-  }
-};
-
-// Відстеження скролу сторінки
 export const trackScroll = (percentage: number) => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'scroll', {
@@ -155,13 +141,22 @@ export const trackScroll = (percentage: number) => {
   }
 };
 
-// Відстеження завантаження сторінки
 export const trackPageLoad = () => {
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'page_load', {
       event_category: 'technical',
-      event_label: 'site_loaded',
-      page_type: 'tarot_landing'
+      event_label: 'site_loaded'
+    });
+  }
+};
+
+// Відстеження часу на сторінці
+export const trackTimeOnPage = (page_name: string, time_seconds: number) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'page_engagement', {
+      event_category: 'engagement',
+      event_label: page_name,
+      value: time_seconds
     });
   }
 };

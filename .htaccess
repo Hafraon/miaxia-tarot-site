@@ -1,4 +1,4 @@
-# Simple .htaccess for MiaxiaLip website
+# MiaxiaLip Website Configuration
 
 RewriteEngine On
 
@@ -21,10 +21,11 @@ RewriteRule ^(.*)$ $1 [R=200,L]
 
 # API routes
 RewriteRule ^telegram-notify\.php$ /public/telegram-notify.php [L]
-RewriteRule ^track-conversion\.php$ /public/track-conversion.php [L]
+RewriteRule ^track-conversion\.php$ /track-conversion.php [L]
 
 # React Router fallback
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_URI} !\.php$
 RewriteRule . /index.html [L]
