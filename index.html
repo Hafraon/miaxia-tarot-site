@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="uk">
   <head>
-      <!-- Google Tag Manager -->
-      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-NVMR3CJ2');</script>
-      <!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NVMR3CJ2');</script>
+    <!-- End Google Tag Manager -->
+    
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/tarot.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -54,11 +55,6 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://miaxialip.com.ua/" />
     
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
@@ -93,7 +89,7 @@
               "name": "1 питання",
               "description": "Отримайте відповідь на одне конкретне питання"
             },
-            "price": "70",
+            "price": "100",
             "priceCurrency": "UAH"
           },
           {
@@ -103,7 +99,7 @@
               "name": "Любовний прогноз",
               "description": "Розклади на сумісність, перспективи стосунків"
             },
-            "price": "280",
+            "price": "350",
             "priceCurrency": "UAH"
           },
           {
@@ -113,7 +109,7 @@
               "name": "Кар'єра і фінанси",
               "description": "Аналіз фінансових можливостей та кар'єрного розвитку"
             },
-            "price": "350",
+            "price": "400",
             "priceCurrency": "UAH"
           },
           {
@@ -123,7 +119,7 @@
               "name": "Персональна матриця",
               "description": "Глибинний аналіз особистості через таро та нумерологію"
             },
-            "price": "570",
+            "price": "650",
             "priceCurrency": "UAH"
           }
         ]
@@ -155,7 +151,7 @@
           "name": "Скільки коштують консультації таро?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Ціни на послуги варіюються від 70 грн за одне питання до 570 грн за персональну матрицю. Всі ціни зі знижками від оригінальної вартості."
+            "text": "Ціни на послуги варіюються від 100 грн за одне питання до 650 грн за персональну матрицю. В телеграм-боті діють спеціальні знижки."
           }
         },
         {
@@ -178,103 +174,16 @@
     }
     </script>
     
-    <!-- Google tag (gtag.js) -->
+    <!-- ВИПРАВЛЕНО: Правильні Google Ads конверсії -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17416940719"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'AW-17416940719');
-    </script>
-    
-    <!-- Enhanced Conversion Tracking for Thank You Page -->
-    <script>
-      // Перевіряємо чи це сторінка подяки
-      document.addEventListener('DOMContentLoaded', function() {
-        const currentPath = window.location.pathname;
-        const isThankYouPage = currentPath === '/thank-you.html' || currentPath.includes('thank-you');
-        
-        if (isThankYouPage) {
-          console.log('🎯 Thank You page detected - sending enhanced conversion data');
-          
-          // Enhanced tracking for thank you page
-          window.dataLayer = window.dataLayer || [];
-          
-          // Відправляємо стандартну подію purchase для GA4
-          window.dataLayer.push({
-            'event': 'purchase',
-            'ecommerce': {
-              'transaction_id': 'TAROT_' + Date.now(),
-              'value': 70, // Базова ціна послуги
-              'currency': 'UAH',
-              'items': [{
-                'item_id': 'tarot_consultation',
-                'item_name': 'Таро консультація',
-                'category': 'Spiritual Services',
-                'quantity': 1,
-                'price': 70
-              }]
-            },
-            'conversion_value': 70,
-            'service_type': 'Таро консультація',
-            'event_category': 'Замовлення',
-            'event_label': 'Completed Order',
-            'custom_conversion': true
-          });
-          
-          // Додаткова подія для конверсії
-          window.dataLayer.push({
-            'event': 'conversion_completed',
-            'conversion_value': 70,
-            'currency': 'UAH',
-            'service_type': 'Таро консультація',
-            'conversion_source': 'website',
-            'conversion_medium': 'organic'
-          });
-          
-          // Подія для ремаркетингу
-          window.dataLayer.push({
-            'event': 'conversion',
-            'send_to': 'AW-7239891504/urnsCLD0n_waEK_ZhfFA',
-            'value': 70,
-            'currency': 'UAH'
-          });
-          
-          // Конверсії для другого аккаунта
-          window.dataLayer.push({
-            'event': 'conversion',
-            'send_to': 'AW-17416940719/waLYCNbXjvwaEK_ZhfFA',
-            'value': 70,
-            'currency': 'UAH'
-          });
-          
-          // Логування для відлагодження
-          console.log('📊 Enhanced conversion data sent:');
-          console.log('- GA4 purchase event');
-          console.log('- Google Ads conversion (AW-7239891504): urnsCLD0n_waEK_ZhfFA');
-          console.log('- Google Ads conversion (AW-17416940719): waLYCNbXjvwaEK_ZhfFA');
-          console.log('- Value: 70 UAH');
-          
-          // Відправляємо дані про успішне замовлення в консоль для перевірки
-          setTimeout(() => {
-            console.log('📈 DataLayer after conversion:', window.dataLayer);
-          }, 1000);
-        }
-      });
       
-      // Функція для ручного тригера конверсії (для тестування)
-      window.triggerConversion = function(value = 70) {
-        console.log('🧪 Manual conversion trigger with value:', value);
-        
-        window.dataLayer.push({
-          'event': 'manual_conversion_test',
-          'conversion_value': value,
-          'currency': 'UAH',
-          'test_mode': true
-        });
-        
-        return 'Conversion triggered manually';
-      };
+      // Безпечна ініціалізація
+      console.log('✅ Google Ads ініціалізовано: AW-17416940719');
     </script>
   </head>
   <body>
@@ -282,49 +191,22 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVMR3CJ2"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Telegram Integration Script -->
+    <div id="root"></div>
+    
+    <!-- Telegram сповіщення -->
     <script>
-      // Telegram Configuration (НОВИЙ БОТ @miaxialip_tarot_bot)
-      window.TELEGRAM_CONFIG = {
-        chatId: '7853031712',
-        botToken: '7853031712:AAHS29d-x7_mWZ1zoNzP8kCbTOxW0vtI18w',
-        recipientEmail: 'miaxialip@gmail.com',
-        botUsername: '@miaxialip_tarot_bot',
-        botUrl: 'https://t.me/miaxialip_tarot_bot'
+      // Конфігурація Telegram
+      const TELEGRAM_CONFIG = {
+        chatId: '603047391',
+        botToken: '7322148325:AAHWjMEFuBVVoUhsPQ6SOsSTBE2fxFZfeXU',
+        recipientEmail: 'miaxialip@gmail.com'
       };
 
-      // ВИПРАВЛЕНО: Умовна логіка для development/production
-      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      const API_BASE_URL = window.location.origin;
-      const TELEGRAM_ENDPOINT = isDevelopment ? '/api/send-telegram' : '/telegram-notify.php';
-
-      console.log('🌐 API Base URL:', API_BASE_URL);
-      console.log('📡 Telegram Endpoint:', TELEGRAM_ENDPOINT);
-      console.log('🛠️ Mode:', isDevelopment ? 'Development (Express)' : 'Production (PHP)');
-
-      // Updated service prices for website (without bot discount)
-      window.WEBSITE_SERVICES = {
-        'individual': { name: '1 питання', price: 100, botPrice: 70, discount: 30, description: 'Отримайте відповідь на одне конкретне питання' },
-        'love': { name: 'Любовний прогноз', price: 350, botPrice: 280, discount: 20, description: 'Розклади на сумісність, перспективи стосунків' },
-        'career': { name: 'Кар\'єра і фінанси', price: 400, botPrice: 350, discount: 12, description: 'Аналіз фінансових можливостей та кар\'єрного розвитку' },
-        'full': { name: '"Про себе" (6 питань)', price: 500, botPrice: 450, discount: 10, description: 'Комплексний розклад про вашу особистість' },
-        'relationship': { name: '"Стосунки" (6 питань)', price: 450, botPrice: 390, discount: 13, description: 'Детальний аналіз ваших стосунків' },
-        'business': { name: '"Бізнес" (6 питань)', price: 450, botPrice: 400, discount: 11, description: 'Розклад для підприємців' },
-        'matrix': { name: 'Персональна матриця', price: 650, botPrice: 570, discount: 12, description: 'Глибинний аналіз особистості через таро та нумерологію' },
-        'compatibility': { name: 'Матриця сумісності', price: 600, botPrice: 550, discount: 8, description: 'Аналіз сумісності з партнером' },
-        'year': { name: 'Аркан на рік', price: 600, botPrice: 560, discount: 7, description: 'Прогноз на цілий рік' }
-      };
-
-      // ВИПРАВЛЕНО: Відправка форми на правильний PHP endpoint
-      window.sendToTelegram = async function(formData) {
+      // Відправка в Telegram
+      async function sendToTelegram(formData) {
         try {
-          console.log('📝 Відправляю дані на сервер:', formData);
-          console.log('🌐 API URL:', `${API_BASE_URL}${TELEGRAM_ENDPOINT}`);
-          
-          const response = await fetch(TELEGRAM_ENDPOINT, {
+          const response = await fetch('/telegram-notify.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -332,433 +214,549 @@
             body: JSON.stringify(formData)
           });
 
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
           const result = await response.json();
           
-          if (response.ok && result.success) {
-            console.log('✅ Повідомлення відправлено успішно:', result);
-            window.showNotification('Повідомлення відправлено успішно!', 'success');
+          if (result.success) {
             return { success: true, data: result };
           } else {
-            throw new Error(result.error || 'Помилка відправки');
+            throw new Error(result.error || 'Telegram API error');
           }
         } catch (error) {
-          console.error('❌ Помилка відправки:', error);
-          window.showNotification('Помилка відправки повідомлення', 'error');
-          return { success: false, error: error.message };
+          console.error('Telegram service error:', error);
+          throw error;
         }
-      };
+      }
 
-      // Show notification function
-      window.showNotification = function(message, type = 'info', duration = 5000) {
-        // Remove existing notifications
-        const existing = document.querySelectorAll('.telegram-notification');
-        existing.forEach(el => el.remove());
+      // Функція для показу сповіщень
+      function showNotification(message, type = 'info') {
+        // Видалити попередні сповіщення
+        const existingNotifications = document.querySelectorAll('.notification-popup');
+        existingNotifications.forEach(notif => notif.remove());
 
         const notification = document.createElement('div');
-        notification.className = `telegram-notification telegram-notification-${type}`;
-        notification.innerHTML = `
-          <div class="telegram-notification-content">
-            <span class="telegram-notification-icon">
-              ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
-            </span>
-            <span class="telegram-notification-text">${message}</span>
-            <button class="telegram-notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
-          </div>
-        `;
-
-        // Add styles
-        const style = document.createElement('style');
-        style.textContent = `
-          .telegram-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            animation: slideInRight 0.3s ease-out;
-          }
-          .telegram-notification-success {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            color: white;
-          }
-          .telegram-notification-error {
-            background: linear-gradient(135deg, #f87171, #ef4444);
-            color: white;
-          }
-          .telegram-notification-info {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            color: white;
-          }
-          .telegram-notification-content {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            gap: 8px;
-          }
-          .telegram-notification-icon {
-            font-size: 18px;
-          }
-          .telegram-notification-text {
-            flex: 1;
-            font-weight: 500;
-          }
-          .telegram-notification-close {
-            background: none;
-            border: none;
-            color: inherit;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-          }
-          .telegram-notification-close:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-          }
-          @keyframes slideInRight {
-            from {
-              transform: translateX(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-        `;
+        notification.className = 'notification-popup';
         
-        if (!document.querySelector('#telegram-notification-styles')) {
-          style.id = 'telegram-notification-styles';
-          document.head.appendChild(style);
-        }
+        const colors = {
+          success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+          error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
+          info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+        };
 
+        const color = colors[type] || colors.info;
+
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: ${color.bg};
+          color: ${color.text};
+          border: 2px solid ${color.border};
+          padding: 20px 25px;
+          border-radius: 12px;
+          z-index: 10000;
+          max-width: 400px;
+          min-width: 300px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+          font-family: 'Raleway', Arial, sans-serif;
+          font-size: 14px;
+          line-height: 1.4;
+          white-space: pre-line;
+          transform: translateX(100%);
+          transition: all 0.3s ease;
+          cursor: pointer;
+        `;
+
+        notification.textContent = message;
         document.body.appendChild(notification);
 
-        // Auto remove after duration
+        // Анімація появи
         setTimeout(() => {
-          if (notification.parentElement) {
-            notification.style.animation = 'slideInRight 0.3s ease-out reverse';
-            setTimeout(() => notification.remove(), 300);
-          }
-        }, duration);
-      };
+          notification.style.transform = 'translateX(0)';
+        }, 10);
 
-      // Show bot promotion with discounts
-      window.showBotPromotion = function() {
-        // Don't show if already shown in this session
-        if (sessionStorage.getItem('botPromoShown')) {
-          return;
-        }
-
-        const promo = document.createElement('div');
-        promo.className = 'telegram-bot-promo';
-        promo.innerHTML = `
-          <div class="telegram-bot-promo-content">
-            <button class="telegram-bot-promo-close" onclick="this.parentElement.parentElement.remove(); sessionStorage.setItem('botPromoShown', 'true');">×</button>
-            
-            <div class="telegram-bot-promo-header">
-              <div class="telegram-bot-promo-icon">🤖</div>
-              <h3>Telegram Bot зі знижками!</h3>
-            </div>
-            
-            <div class="telegram-bot-promo-discount">
-              <span class="telegram-bot-promo-percent">до 30%</span>
-              <span class="telegram-bot-promo-text">знижки</span>
-            </div>
-            
-            <div class="telegram-bot-promo-services">
-              <div class="telegram-bot-promo-service">
-                <span>1 питання:</span>
-                <span><s>100₴</s> <strong>70₴</strong></span>
-              </div>
-              <div class="telegram-bot-promo-service">
-                <span>Любовний прогноз:</span>
-                <span><s>350₴</s> <strong>280₴</strong></span>
-              </div>
-              <div class="telegram-bot-promo-service">
-                <span>Персональна матриця:</span>
-                <span><s>650₴</s> <strong>570₴</strong></span>
-              </div>
-            </div>
-            
-            <button class="telegram-bot-promo-button" onclick="window.open('${window.TELEGRAM_CONFIG.botUrl}', '_blank'); this.parentElement.parentElement.remove(); sessionStorage.setItem('botPromoShown', 'true');">
-              <span>🚀 Перейти до бота</span>
-            </button>
-            
-            <p class="telegram-bot-promo-footer">
-              Швидше, зручніше, дешевше!
-            </p>
-          </div>
+        // Додати кнопку закриття
+        const closeBtn = document.createElement('span');
+        closeBtn.innerHTML = '✕';
+        closeBtn.style.cssText = `
+          position: absolute;
+          top: 8px;
+          right: 12px;
+          cursor: pointer;
+          font-size: 16px;
+          opacity: 0.7;
+          transition: opacity 0.2s;
         `;
-
-        // Add promo styles
-        const promoStyle = document.createElement('style');
-        promoStyle.textContent = `
-          .telegram-bot-promo {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10001;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            animation: telegramPromoAppear 0.5s ease-out, telegramPromoPulse 2s ease-in-out infinite;
-            max-width: 90vw;
-            width: 400px;
-          }
-          .telegram-bot-promo::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(45deg, #d4af37, #f5e0a2, #d4af37);
-            border-radius: 18px;
-            z-index: -1;
-            animation: telegramPromoGlow 3s ease-in-out infinite;
-          }
-          .telegram-bot-promo-content {
-            position: relative;
-            padding: 24px;
-            color: white;
-            text-align: center;
-          }
-          .telegram-bot-promo-close {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-          }
-          .telegram-bot-promo-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-          }
-          .telegram-bot-promo-header {
-            margin-bottom: 16px;
-          }
-          .telegram-bot-promo-icon {
-            font-size: 48px;
-            margin-bottom: 8px;
-            animation: telegramPromoFloat 2s ease-in-out infinite;
-          }
-          .telegram-bot-promo-header h3 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-          }
-          .telegram-bot-promo-discount {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px;
-            margin: 16px 0;
-            backdrop-filter: blur(10px);
-          }
-          .telegram-bot-promo-percent {
-            font-size: 32px;
-            font-weight: bold;
-            color: #d4af37;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-          }
-          .telegram-bot-promo-text {
-            display: block;
-            font-size: 16px;
-            margin-top: 4px;
-          }
-          .telegram-bot-promo-services {
-            margin: 16px 0;
-            text-align: left;
-          }
-          .telegram-bot-promo-service {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-          }
-          .telegram-bot-promo-service:last-child {
-            border-bottom: none;
-          }
-          .telegram-bot-promo-service s {
-            color: rgba(255, 255, 255, 0.6);
-            margin-right: 8px;
-          }
-          .telegram-bot-promo-service strong {
-            color: #d4af37;
-            font-weight: bold;
-          }
-          .telegram-bot-promo-button {
-            background: linear-gradient(135deg, #d4af37, #f5e0a2);
-            color: #0a1128;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin: 16px 0 8px 0;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-          }
-          .telegram-bot-promo-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
-          }
-          .telegram-bot-promo-footer {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.8;
-            font-style: italic;
-          }
-          
-          @keyframes telegramPromoAppear {
-            from {
-              opacity: 0;
-              transform: translate(-50%, -50%) scale(0.8);
-            }
-            to {
-              opacity: 1;
-              transform: translate(-50%, -50%) scale(1);
-            }
-          }
-          @keyframes telegramPromoPulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.02); }
-          }
-          @keyframes telegramPromoGlow {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-          }
-          @keyframes telegramPromoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-          }
-          
-          @media (max-width: 480px) {
-            .telegram-bot-promo {
-              width: 95vw;
-              margin: 0 2.5vw;
-            }
-            .telegram-bot-promo-content {
-              padding: 20px;
-            }
-            .telegram-bot-promo-header h3 {
-              font-size: 20px;
-            }
-            .telegram-bot-promo-percent {
-              font-size: 28px;
-            }
-          }
-        `;
-        
-        if (!document.querySelector('#telegram-promo-styles')) {
-          promoStyle.id = 'telegram-promo-styles';
-          document.head.appendChild(promoStyle);
-        }
-
-        // Add backdrop
-        const backdrop = document.createElement('div');
-        backdrop.style.cssText = `
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 10000;
-          backdrop-filter: blur(4px);
-        `;
-        backdrop.onclick = () => {
-          backdrop.remove();
-          promo.remove();
-          sessionStorage.setItem('botPromoShown', 'true');
+        closeBtn.onmouseenter = () => closeBtn.style.opacity = '1';
+        closeBtn.onmouseleave = () => closeBtn.style.opacity = '0.7';
+        closeBtn.onclick = (e) => {
+          e.stopPropagation();
+          removeNotification(notification);
         };
+        notification.appendChild(closeBtn);
 
-        document.body.appendChild(backdrop);
-        document.body.appendChild(promo);
+        // Автоматичне приховання
+        const hideTimeout = type === 'error' ? 8000 : 5000;
+        setTimeout(() => removeNotification(notification), hideTimeout);
 
-        // Mark as shown
-        sessionStorage.setItem('botPromoShown', 'true');
-      };
+        // Приховання по кліку
+        notification.onclick = () => removeNotification(notification);
+      }
 
-      // ВИПРАВЛЕНО: Тестова функція з правильним endpoint
+      function removeNotification(notification) {
+        if (notification && notification.parentNode) {
+          notification.style.transform = 'translateX(100%)';
+          notification.style.opacity = '0';
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.remove();
+            }
+          }, 300);
+        }
+      }
+
+      // Функція для розумного збору даних з поля
+      function getFieldValue(input) {
+        if (!input) return '';
+        
+        const value = input.value?.trim() || '';
+        const name = input.name?.toLowerCase() || '';
+        const id = input.id?.toLowerCase() || '';
+        const placeholder = input.placeholder?.toLowerCase() || '';
+        const type = input.type?.toLowerCase() || '';
+        
+        return {
+          value: value,
+          name: name,
+          id: id,
+          placeholder: placeholder,
+          type: type,
+          element: input
+        };
+      }
+
+      // Розумний збір даних з форми
+      function smartFormDataCollection(form) {
+        const inputs = Array.from(form.querySelectorAll('input, select, textarea'));
+        const fieldData = inputs.map(getFieldValue);
+        
+        console.log('Всі поля форми:', fieldData);
+        
+        const data = {
+          name: '',
+          email: '',
+          phone: '',
+          instagram: '',
+          service: '',
+          message: '',
+          date: '',
+          time: ''
+        };
+        
+        // Збір даних по полях
+        fieldData.forEach(field => {
+          if (!field.value) return;
+          
+          const fieldText = `${field.name} ${field.id} ${field.placeholder}`.toLowerCase();
+          
+          // Ім'я
+          if (!data.name && (
+            fieldText.includes('name') || 
+            fieldText.includes('ім\'я') || 
+            fieldText.includes('імя') ||
+            field.name === 'name' ||
+            field.id === 'name'
+          )) {
+            data.name = field.value;
+            console.log('✅ Знайдено ім\'я:', field.value);
+          }
+          
+          // Instagram (перевіряємо ПЕРЕД email!)
+          else if (!data.instagram && (
+            fieldText.includes('instagram') ||
+            fieldText.includes('інстаграм') ||
+            fieldText.includes('інста') ||
+            fieldText.includes('insta') ||
+            // Instagram нікнейм: @ без крапки або спеціальні символи email
+            (field.value.includes('@') && !field.value.includes('.') && !field.value.includes('+'))
+          )) {
+            data.instagram = field.value;
+            console.log('✅ Знайдено Instagram:', field.value);
+          }
+          
+          // Email (тепер перевіряємо більш точно)
+          else if (!data.email && (
+            field.type === 'email' ||
+            fieldText.includes('email') ||
+            fieldText.includes('е-мейл') ||
+            fieldText.includes('емейл') ||
+            // Email має містити @ і крапку (домен)
+            (field.value.includes('@') && field.value.includes('.'))
+          )) {
+            data.email = field.value;
+            console.log('✅ Знайдено email:', field.value);
+          }
+          
+          // Телефон
+          else if (!data.phone && (
+            field.type === 'tel' ||
+            fieldText.includes('phone') ||
+            fieldText.includes('tel') ||
+            fieldText.includes('телефон') ||
+            fieldText.includes('номер') ||
+            /^[\+]?[\d\s\-\(\)]{7,}$/.test(field.value)
+          )) {
+            data.phone = field.value;
+            console.log('✅ Знайдено телефон:', field.value);
+          }
+          
+          // Послуга
+          else if (!data.service && (
+            field.element.tagName === 'SELECT' ||
+            fieldText.includes('service') ||
+            fieldText.includes('послуга') ||
+            fieldText.includes('тип') ||
+            fieldText.includes('category')
+          )) {
+            data.service = field.value;
+            console.log('✅ Знайдено послугу:', field.value);
+          }
+          
+          // Повідомлення
+          else if (!data.message && (
+            field.element.tagName === 'TEXTAREA' ||
+            fieldText.includes('message') ||
+            fieldText.includes('повідомлення') ||
+            fieldText.includes('коментар') ||
+            fieldText.includes('додатково') ||
+            fieldText.includes('примітка')
+          )) {
+            data.message = field.value;
+            console.log('✅ Знайдено повідомлення:', field.value);
+          }
+          
+          // Дата
+          else if (!data.date && (
+            field.type === 'date' ||
+            fieldText.includes('date') ||
+            fieldText.includes('дата') ||
+            /^\d{4}-\d{2}-\d{2}$/.test(field.value)
+          )) {
+            data.date = field.value;
+            console.log('✅ Знайдено дату:', field.value);
+          }
+          
+          // Час
+          else if (!data.time && (
+            field.type === 'time' ||
+            fieldText.includes('time') ||
+            fieldText.includes('час') ||
+            /^\d{2}:\d{2}$/.test(field.value)
+          )) {
+            data.time = field.value;
+            console.log('✅ Знайдено час:', field.value);
+          }
+        });
+        
+        console.log('Фінальні дані:', data);
+        return data;
+      }
+
+      // Універсальний обробник форм
+      function initTelegramNotifications() {
+        // Функція для обробки відправки форми
+        async function handleFormSubmit(event) {
+          event.preventDefault();
+          
+          const form = event.target;
+          
+          // Використовуємо розумний збір даних
+          const data = smartFormDataCollection(form);
+
+          // Валідація - хоча б одне поле має бути заповнено
+          const hasAnyData = Object.values(data).some(value => value && value.trim());
+          
+          if (!hasAnyData) {
+            showNotification('❌ Будь ласка, заповніть хоча б одне поле форми', 'error');
+            console.log('Немає даних у формі');
+            return;
+          }
+
+          // М'яка валідація - попереджуємо, але не блокуємо
+          if (!data.name.trim() && !data.email.trim() && !data.phone.trim() && !data.instagram.trim()) {
+            showNotification('⚠️ Додайте ім\'я, email, телефон або Instagram для кращого зв\'язку', 'info');
+          }
+
+          // Знайти кнопку відправки
+          const submitButton = form.querySelector('button[type="submit"]') || 
+                             form.querySelector('input[type="submit"]') ||
+                             form.querySelector('button');
+
+          const originalText = submitButton ? (submitButton.textContent || submitButton.value) : '';
+          
+          // Показати індикатор завантаження
+          if (submitButton) {
+            submitButton.textContent = 'Відправляємо...';
+            submitButton.disabled = true;
+            submitButton.style.opacity = '0.7';
+            submitButton.style.cursor = 'wait';
+          }
+
+          try {
+            // Відправити в Telegram
+            const result = await sendToTelegram(data);
+            
+            if (result.success) {
+              // Показати успішне повідомлення
+              showNotification('🎉 Повідомлення відправлено!\n✅ Telegram сповіщення надіслано\n\nМи зв\'яжемося з вами найближчим часом!', 'success');
+              
+              // Очистити форму
+              form.reset();
+              
+              // ВИПРАВЛЕНО: Правильна конверсія Google Ads
+              try {
+                if (typeof gtag !== 'undefined') {
+                  gtag('event', 'conversion', {
+                    'send_to': 'AW-17416940719/waLYCNbXjvwaEK_ZhfFA',
+                    'value': 100,
+                    'currency': 'UAH'
+                  });
+                  console.log('✅ Google Ads конверсія відправлена');
+                }
+              } catch (conversionError) {
+                console.log('ℹ️ Google Ads конверсія не відправлена (заблокована):', conversionError.message);
+              }
+              
+              // Додаткове повідомлення з контактами
+              setTimeout(() => {
+                showNotification('📞 Якщо терміново, пишіть напряму:\n📧 miaxialip@gmail.com\n📱 Instagram: @miaxialip', 'info');
+              }, 3000);
+              
+            } else {
+              showNotification('❌ Помилка відправки повідомлення.\nСпробуйте ще раз або зв\'яжіться напряму.', 'error');
+            }
+            
+          } catch (error) {
+            console.error('Form submission error:', error);
+            
+            let errorMessage = '❌ Помилка з\'єднання.\n\n';
+            
+            if (error.message.includes('HTTP 404')) {
+              errorMessage += 'Сервіс тимчасово недоступний.';
+            } else if (error.message.includes('Failed to fetch')) {
+              errorMessage += 'Перевірте з\'єднання з інтернетом.';
+            } else {
+              errorMessage += 'Спробуйте пізніше або зв\'яжіться напряму.';
+            }
+            
+            errorMessage += '\n\n📧 miaxialip@gmail.com\n📱 Instagram: @miaxialip';
+            
+            showNotification(errorMessage, 'error');
+          } finally {
+            // Відновити кнопку
+            if (submitButton) {
+              submitButton.textContent = originalText;
+              submitButton.disabled = false;
+              submitButton.style.opacity = '1';
+              submitButton.style.cursor = 'pointer';
+            }
+          }
+        }
+
+        // Пошук і обробка форм
+        function attachToForms() {
+          const forms = document.querySelectorAll('form');
+          
+          forms.forEach(form => {
+            // Перевірити, чи вже має обробник
+            if (!form.hasAttribute('data-telegram-handler')) {
+              form.setAttribute('data-telegram-handler', 'true');
+              
+              // Додати поле для повідомлення, якщо його немає
+              addMessageFieldToForm(form);
+              
+              // Видалити існуючі обробники submit
+              const newForm = form.cloneNode(true);
+              form.parentNode.replaceChild(newForm, form);
+              
+              // Додати новий обробник
+              newForm.addEventListener('submit', handleFormSubmit);
+              
+              console.log('✅ Telegram notification system attached to form');
+            }
+          });
+        }
+
+        // Функція для додавання поля повідомлення
+        function addMessageFieldToForm(form) {
+          // Перевірити, чи вже є поле для повідомлення
+          const existingMessageField = form.querySelector('textarea, input[name*="message"], input[name*="comment"], input[name*="notes"]');
+          
+          if (!existingMessageField) {
+            // Знайти кнопку відправки
+            const submitButton = form.querySelector('button[type="submit"]') || form.querySelector('button');
+            
+            if (submitButton) {
+              // Створити поле для повідомлення
+              const messageField = document.createElement('div');
+              messageField.style.marginBottom = '15px';
+              messageField.innerHTML = `
+                <label style="display: block; margin-bottom: 8px; color: #fff; font-family: 'Raleway', Arial, sans-serif; font-size: 14px;">
+                  Додаткові побажання (необов'язково)
+                </label>
+                <textarea 
+                  name="message" 
+                  placeholder="Розкажіть більше про ваші питання або побажання..."
+                  style="
+                    width: 100%; 
+                    padding: 12px; 
+                    border: 1px solid rgba(255,255,255,0.3); 
+                    border-radius: 8px; 
+                    background: rgba(255,255,255,0.1); 
+                    color: #fff; 
+                    font-family: 'Raleway', Arial, sans-serif; 
+                    font-size: 14px;
+                    resize: vertical;
+                    min-height: 80px;
+                    box-sizing: border-box;
+                  "
+                ></textarea>
+              `;
+              
+              // Вставити перед кнопкою
+              submitButton.parentNode.insertBefore(messageField, submitButton);
+              
+              console.log('✅ Added message field to form');
+            }
+          }
+        }
+
+        // Запустити при завантаженні сторінки
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', attachToForms);
+        } else {
+          attachToForms();
+        }
+
+        // Перевіряти нові форми кожні 2 секунди (для динамічного контенту React)
+        setInterval(attachToForms, 2000);
+      }
+
+      // Тестова функція для перевірки Telegram
       window.testTelegram = async function() {
         const testData = {
-          name: 'Тест з сайту',
+          name: 'Тест системи',
+          email: 'test@example.com',
           phone: '+380123456789',
           instagram: '@test_user',
-          service: 'individual',
-          question: 'Це тестове повідомлення з браузера'
+          service: 'Тестування',
+          message: 'Це тестове повідомлення для перевірки роботи системи',
+          date: new Date().toISOString().split('T')[0],
+          time: new Date().toTimeString().split(' ')[0].slice(0,5)
         };
-
-        console.log('🧪 Тестую сервер на:', `${API_BASE_URL}${TELEGRAM_ENDPOINT}`);
-        const result = await window.sendToTelegram(testData);
         
-        if (result.success) {
-          console.log('✅ Тест успішний!');
-        } else {
-          console.error('❌ Тест не пройшов:', result.error);
+        try {
+          const result = await sendToTelegram(testData);
+          console.log('✅ Test successful:', result);
+          showNotification('✅ Тест успішний! Система працює.', 'success');
+        } catch (error) {
+          console.error('❌ Test failed:', error);
+          showNotification('❌ Тест не пройшов: ' + error.message, 'error');
         }
-        
-        return result;
       };
 
-      // Initialize - show promo after 10 seconds
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Telegram integration initialized');
-        console.log('📱 Bot:', window.TELEGRAM_CONFIG.botUsername);
-        console.log('💰 Services with discounts:', Object.keys(window.WEBSITE_SERVICES).length);
-        console.log('🌐 Environment:', isDevelopment ? 'Development (localhost)' : 'Production');
-        console.log('📡 Endpoint:', TELEGRAM_ENDPOINT);
-        console.log('🛠️ Backend:', isDevelopment ? 'Express server (port 3000)' : 'PHP server');
-        
-        // Bot promotion disabled
-        // setTimeout(() => {
-        //   if (!sessionStorage.getItem('botPromoShown')) {
-        //     window.showBotPromotion();
-        //   }
-        // }, 10000);
-        
-        // Test connection (only in development)
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          console.log('🔧 Development mode - testing Express connection...');
-          // Uncomment next line to test in development
-          // setTimeout(() => window.testTelegram(), 2000);
-        }
-      });
+      // Ініціалізація системи
+      initTelegramNotifications();
 
-      // Global error handler for Telegram operations
-      window.addEventListener('error', function(event) {
-        if (event.message && event.message.includes('Telegram')) {
-          console.error('🚨 Telegram Error:', event.error);
-          window.showNotification('Помилка Telegram інтеграції', 'error');
-        }
-      });
-
-      // Expose functions globally for debugging
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        console.log('🔧 Development mode - функції доступні:');
-        console.log('- window.testTelegram() - тест PHP endpoint');
-        console.log('- window.sendToTelegram(formData) - відправка на telegram-notify.php');
-        console.log('- window.showNotification(message, type)');
-        console.log('- window.showBotPromotion()');
-        console.log('- window.triggerConversion(value) - тест конверсії');
-      }
+      // Показати повідомлення про готовність системи
+      setTimeout(() => {
+        console.log('🚀 Telegram notification system is ready!');
+        console.log('💡 Для тестування виконайте: testTelegram()');
+      }, 1000);
     </script>
+
+    <!-- Стилі для форм + виправлення горизонтальної прокрутки -->
+    <style>
+      /* Виправлення горизонтальної прокрутки */
+      html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+      }
+      
+      * {
+        box-sizing: border-box !important;
+      }
+      
+      /* Обмеження ширини для всіх контейнерів */
+      #root, #root > *, [class*="container"], [class*="wrapper"] {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+      }
+      
+      /* Виправлення для широких елементів */
+      img, video, iframe {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      
+      /* Виправлення для таблиць */
+      table {
+        table-layout: fixed !important;
+        width: 100% !important;
+      }
+      
+      .notification-popup {
+        font-family: 'Raleway', Arial, sans-serif !important;
+      }
+      
+      /* Стилі для кнопок форм при відправці */
+      button[disabled], input[disabled] {
+        cursor: wait !important;
+      }
+      
+      /* Анімація завантаження для кнопки */
+      button[type="submit"]:disabled::after {
+        content: "";
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-left: 8px;
+        border: 2px solid currentColor;
+        border-radius: 50%;
+        border-right-color: transparent;
+        animation: button-loading 1s linear infinite;
+      }
+      
+      @keyframes button-loading {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      
+      /* Стилі для красивіших сповіщень */
+      .notification-popup:hover {
+        transform: translateX(-5px) !important;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.2) !important;
+      }
+      
+      /* Додаткові виправлення для десктопів */
+      @media (min-width: 768px) {
+        body {
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+        }
+        
+        /* Центрування контенту на великих екранах */
+        #root {
+          margin: 0 auto !important;
+          padding: 0 20px !important;
+        }
+      }
+    </style>
+    
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
