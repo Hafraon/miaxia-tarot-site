@@ -4,6 +4,14 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      // Переконатися що index.html правильно обробляється
+      input: {
+        main: 'index.html'
+      }
+    }
+  },
   server: {
     proxy: {
       // Всі API запити проксувати до Express сервера
