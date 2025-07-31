@@ -186,6 +186,96 @@
       gtag('js', new Date());
       gtag('config', 'AW-17416940719');
     </script>
+    
+    <!-- Enhanced Conversion Tracking for Thank You Page -->
+    <script>
+      // Перевіряємо чи це сторінка подяки
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const isThankYouPage = currentPath === '/thank-you' || currentPath.includes('thank-you');
+        
+        if (isThankYouPage) {
+          console.log('🎯 Thank You page detected - sending enhanced conversion data');
+          
+          // Enhanced tracking for thank you page
+          window.dataLayer = window.dataLayer || [];
+          
+          // Відправляємо стандартну подію purchase для GA4
+          window.dataLayer.push({
+            'event': 'purchase',
+            'ecommerce': {
+              'transaction_id': 'TAROT_' + Date.now(),
+              'value': 70, // Базова ціна послуги
+              'currency': 'UAH',
+              'items': [{
+                'item_id': 'tarot_consultation',
+                'item_name': 'Таро консультація',
+                'category': 'Spiritual Services',
+                'quantity': 1,
+                'price': 70
+              }]
+            },
+            'conversion_value': 70,
+            'service_type': 'Таро консультація',
+            'event_category': 'Замовлення',
+            'event_label': 'Completed Order',
+            'custom_conversion': true
+          });
+          
+          // Додаткова подія для конверсії
+          window.dataLayer.push({
+            'event': 'conversion_completed',
+            'conversion_value': 70,
+            'currency': 'UAH',
+            'service_type': 'Таро консультація',
+            'conversion_source': 'website',
+            'conversion_medium': 'organic'
+          });
+          
+          // Подія для ремаркетингу
+          window.dataLayer.push({
+            'event': 'conversion',
+            'send_to': 'AW-7239891504/urnsCLD0n_waEK_ZhfFA',
+            'value': 70,
+            'currency': 'UAH'
+          });
+          
+          // Друга конверсія для другого аккаунта (якщо потрібно)
+          window.dataLayer.push({
+            'event': 'conversion',
+            'send_to': 'AW-17416940719/ВАША_МІТКА_КОНВЕРСІЇ',
+            'value': 70,
+            'currency': 'UAH'
+          });
+          
+          // Логування для відлагодження
+          console.log('📊 Enhanced conversion data sent:');
+          console.log('- GA4 purchase event');
+          console.log('- Google Ads conversion (AW-7239891504)');
+          console.log('- Google Ads conversion (AW-17416940719)');
+          console.log('- Value: 70 UAH');
+          
+          // Відправляємо дані про успішне замовлення в консоль для перевірки
+          setTimeout(() => {
+            console.log('📈 DataLayer after conversion:', window.dataLayer);
+          }, 1000);
+        }
+      });
+      
+      // Функція для ручного тригера конверсії (для тестування)
+      window.triggerConversion = function(value = 70) {
+        console.log('🧪 Manual conversion trigger with value:', value);
+        
+        window.dataLayer.push({
+          'event': 'manual_conversion_test',
+          'conversion_value': value,
+          'currency': 'UAH',
+          'test_mode': true
+        });
+        
+        return 'Conversion triggered manually';
+      };
+    </script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -206,12 +296,14 @@
         botUrl: 'https://t.me/miaxialip_tarot_bot'
       };
 
-      // ВИПРАВЛЕНО: Динамічний API URL для локальної розробки та продакшну
-      const API_BASE_URL = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000' 
-        : window.location.origin;
+      // ВИПРАВЛЕНО: Умовна логіка для development/production
+      const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const API_BASE_URL = window.location.origin;
+      const TELEGRAM_ENDPOINT = isDevelopment ? '/api/send-telegram' : '/telegram-notify.php';
 
       console.log('🌐 API Base URL:', API_BASE_URL);
+      console.log('📡 Telegram Endpoint:', TELEGRAM_ENDPOINT);
+      console.log('🛠️ Mode:', isDevelopment ? 'Development (Express)' : 'Production (PHP)');
 
       // Updated service prices for website (without bot discount)
       window.WEBSITE_SERVICES = {
@@ -226,13 +318,13 @@
         'year': { name: 'Аркан на рік', price: 600, botPrice: 560, discount: 7, description: 'Прогноз на цілий рік' }
       };
 
-      // ВИПРАВЛЕНО: Відправка форми з динамічним URL
+      // ВИПРАВЛЕНО: Відправка форми на правильний PHP endpoint
       window.sendToTelegram = async function(formData) {
         try {
           console.log('📝 Відправляю дані на сервер:', formData);
-          console.log('🌐 API URL:', `${API_BASE_URL}/api/send-telegram`);
+          console.log('🌐 API URL:', `${API_BASE_URL}${TELEGRAM_ENDPOINT}`);
           
-          const response = await fetch(`${API_BASE_URL}/api/send-telegram`, {
+          const response = await fetch(TELEGRAM_ENDPOINT, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -604,7 +696,7 @@
         sessionStorage.setItem('botPromoShown', 'true');
       };
 
-      // ВИПРАВЛЕНО: Тестова функція з динамічним URL
+      // ВИПРАВЛЕНО: Тестова функція з правильним endpoint
       window.testTelegram = async function() {
         const testData = {
           name: 'Тест з сайту',
@@ -614,7 +706,7 @@
           question: 'Це тестове повідомлення з браузера'
         };
 
-        console.log('🧪 Тестую сервер на:', `${API_BASE_URL}/api/send-telegram`);
+        console.log('🧪 Тестую сервер на:', `${API_BASE_URL}${TELEGRAM_ENDPOINT}`);
         const result = await window.sendToTelegram(testData);
         
         if (result.success) {
@@ -631,14 +723,16 @@
         console.log('🚀 Telegram integration initialized');
         console.log('📱 Bot:', window.TELEGRAM_CONFIG.botUsername);
         console.log('💰 Services with discounts:', Object.keys(window.WEBSITE_SERVICES).length);
-        console.log('🌐 Environment:', window.location.hostname === 'localhost' ? 'Development' : 'Production');
+        console.log('🌐 Environment:', isDevelopment ? 'Development (localhost)' : 'Production');
+        console.log('📡 Endpoint:', TELEGRAM_ENDPOINT);
+        console.log('🛠️ Backend:', isDevelopment ? 'Express server (port 3000)' : 'PHP server');
         
-        // Show bot promotion after 10 seconds
-        setTimeout(() => {
-          if (!sessionStorage.getItem('botPromoShown')) {
-            window.showBotPromotion();
-          }
-        }, 10000);
+        // Bot promotion disabled
+        // setTimeout(() => {
+        //   if (!sessionStorage.getItem('botPromoShown')) {
+        //     window.showBotPromotion();
+        //   }
+        // }, 10000);
         
         // Test connection (only in development)
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -659,10 +753,11 @@
       // Expose functions globally for debugging
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('🔧 Development mode - функції доступні:');
-        console.log('- window.testTelegram()');
-        console.log('- window.sendToTelegram(formData)');
+        console.log('- window.testTelegram() - тест PHP endpoint');
+        console.log('- window.sendToTelegram(formData) - відправка на telegram-notify.php');
         console.log('- window.showNotification(message, type)');
         console.log('- window.showBotPromotion()');
+        console.log('- window.triggerConversion(value) - тест конверсії');
       }
     </script>
   </body>
