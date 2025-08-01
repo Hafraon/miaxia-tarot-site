@@ -20,7 +20,6 @@ const OrderForm: React.FC = () => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
 
-  // Відстеження початку заповнення форми
   const handleFormStart = () => {
     trackFormStart('order_form');
   };
@@ -34,12 +33,10 @@ const OrderForm: React.FC = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
     
-    // Відстеження початку заповнення при першому введенні
     if (!formData.name && !formData.phone && !formData.question) {
       handleFormStart();
     }
     
-    // Clear error when field is changed
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -48,7 +45,6 @@ const OrderForm: React.FC = () => {
       });
     }
     
-    // Clear submit status when user starts typing again
     if (submitStatus !== 'idle') {
       setSubmitStatus('idle');
       setSubmitMessage('');
@@ -74,7 +70,6 @@ const OrderForm: React.FC = () => {
       newErrors.phone = "Телефон повинен містити мінімум 10 цифр";
     }
     
-    // Phone format validation
     const phoneRegex = /^(\+380|380|0)[0-9]{9}$/;
     if (formData.phone && !phoneRegex.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
       newErrors.phone = "Невірний формат телефону. Використовуйте: +380XXXXXXXXX";
@@ -103,34 +98,45 @@ const OrderForm: React.FC = () => {
     setSubmitMessage('');
     
     try {
-      // Відстеження відправки форми
       trackFormSubmit('order_form', formData.service || 'full_consultation');
       
-      const response = await fetch('/api/send-telegram', {
+      // ВИПРАВЛЕНО: Відправляємо безпосередньо на PHP endpoint
+      const telegramData = {
+        name: formData.name,
+        phone: formData.phone,
+        email: '', // не обов'язково
+        instagram: formData.instagram,
+        service: formData.service || 'full_consultation',
+        message: `Дата народження: ${formData.birthdate}\n\nПитання: ${formData.question}`,
+        date: '',
+        time: ''
+      };
+
+      const response = await fetch('/public/telegram-notify.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(telegramData),
       });
 
       const result = await response.json();
       
       if (response.ok && result.success) {
         // Відстеження успішної конверсії
-        const serviceInfo = result.service || SERVICES[formData.service as keyof typeof SERVICES];
-        const servicePrice = serviceInfo ? serviceInfo.originalPrice : 500; // Використовуємо повну ціну
+        const serviceInfo = SERVICES[formData.service as keyof typeof SERVICES];
+        const servicePrice = serviceInfo ? serviceInfo.originalPrice : 500;
         const serviceName = serviceInfo ? serviceInfo.name : 'Повна консультація таро';
         
         trackOrderFormConversion(serviceName, servicePrice);
         
         setSubmitStatus('success');
-        setSubmitMessage('Заявка успішно відправлена! Перенаправляємо...');
+        setSubmitMessage('Заявка відправлена! Перенаправляємо...');
         
-        // Redirect to thank you page after short delay
+        // ВИПРАВЛЕНО: Миттєве перенаправлення замість 2 секунд
         setTimeout(() => {
           window.location.href = '/thank-you.html';
-        }, 2000);
+        }, 500); // Тільки 0.5 секунди для показу повідомлення
       } else {
         throw new Error(result.error || 'Помилка відправки');
       }
@@ -275,7 +281,6 @@ const OrderForm: React.FC = () => {
               {errors.consent && <p className="text-accent text-sm mt-1">{errors.consent}</p>}
             </div>
 
-            {/* Instagram інформація */}
             <div className="mb-6 p-4 bg-gradient-to-r from-purple/10 to-blue/10 border border-gold/20 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">📱</span>
