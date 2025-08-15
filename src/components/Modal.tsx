@@ -231,19 +231,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           Залиште свої контактні дані, і я зв'яжуся з вами найближчим часом для узгодження деталей.
         </p>
         
-        <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-3 mb-6">
-          <p className="text-sm text-blue-200">
-            💡 <strong>Підказка:</strong> В Telegram боті всі ці ж консультації дешевші на 20-30%!
-          </p>
-          <a 
-            href="https://t.me/miaxialiptarotbot" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-300 hover:text-blue-200 text-sm underline"
-          >
-            Перейти в бот →
-          </a>
-        </div>
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
