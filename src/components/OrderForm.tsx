@@ -281,17 +281,6 @@ const OrderForm: React.FC = () => {
               {errors.consent && <p className="text-accent text-sm mt-1">{errors.consent}</p>}
             </div>
 
-            <div className="mb-6 p-4 bg-gradient-to-r from-purple/10 to-blue/10 border border-gold/20 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">📱</span>
-                <h4 className="text-gold font-semibold">Важлива інформація про зв'язок</h4>
-              </div>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Після подачі заявки з вами зв'яжуться в Instagram <a href="https://instagram.com/miaxialip" target="_blank" rel="noopener noreferrer" className="text-gold hover:text-gold/80 font-semibold">@miaxialip</a> для уточнення деталей та надання вашого персонального розкладу. 
-                Переконайтеся, що ваш Instagram доступний для повідомлень.
-              </p>
-            </div>
-
             {submitMessage && (
               <div className={`mb-6 p-4 rounded-md border ${
                 submitStatus === 'success' 
